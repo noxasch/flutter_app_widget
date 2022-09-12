@@ -1,8 +1,7 @@
-name: app_widget
+name: app_widget_android
 description: flutter app widget
 version: 0.0.1
 homepage:
-publish_to: 'none'
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -12,8 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  app_widget_platform_interface:
-    path: ../app_widget_platform_interface
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +34,9 @@ flutter:
   # adding or updating assets for this project.
   plugin:
     platforms:
+      android:
+        package: tech.noxasch.app_widget_android
+        pluginClass: AppWidgetAndroidPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
