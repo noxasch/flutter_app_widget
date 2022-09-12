@@ -1,0 +1,87 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  # The lint rules applied to this project can be customized in the
+  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
+  # included above or to enable additional rules. A list of all available lints
+  # and their documentation is published at
+  # https://dart-lang.github.io/linter/lints/index.html.
+  #
+  # Instead of disabling a lint rule for the entire project in the
+  # section below, it can also be suppressed for a single line of code
+  # or a specific dart file by using the `// ignore: name_of_lint` and
+  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
+  # producing the lint.
+  rules:
+    prefer_single_quotes: true
+    eol_at_end_of_file: true
+    directives_ordering: true
+    require_trailing_commas: true
+    unnecessary_await_in_return: true
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+analyzer:
+  exclude:
+    - lib/**/*.g.dart # freezed and drift
+    - lib/firebase_options_*.dart
+    - lib/**/*.freezed.dart # freezed
+  errors:
+    invalid_annotation_target: ignore
+    missing_required_param: warning
+    missing_return: warning
+    todo: ignore
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  # high CPU usage issue
+  # https://github.com/dart-code-checker/dart-code-metrics/issues/568
+  # plugins:
+  #   - dart_code_metrics
+
+dart_code_metrics:
+  anti-patterns:
+    - long-method:
+        severity: warning
+    - long-parameter-list:
+        severity: warning
+  metrics:
+    cyclomatic-complexity: 20
+    maximum-nesting-level: 5
+    number-of-parameters: 4
+    source-lines-of-code: 50
+    # maintainability-index: 50
+  metrics-exclude:
+    - test/**
+    - lib/**/*.g.dart
+    - lib/firebase_options_*.dart
+  rules:
+    - newline-before-return:
+        severity: style
+    - no-boolean-literal-compare:
+        severity: warning
+    - prefer-async-await
+    - no-empty-block
+    - prefer-enums-by-name
+    - prefer-trailing-comma:
+        severity: style
+    - prefer-conditional-expressions
+    - no-equal-then-else
+    - avoid-non-ascii-symbols
+    - double-literal-format
+    - no-magic-number
+    - avoid-returning-widgets
+    - avoid-unnecessary-setstate
+    - avoid-use-expanded-as-spacer
+    - avoid-wrapping-in-padding
+    - prefer-correct-edge-insets-constructor
+    - prefer-extracting-callbacks
+    - avoid-nested-conditional-expressions:
+        acceptable-level: 2
+    - member-ordering:
+        # alphabetize: true
+        order:
+          - constructors
+          - public-fields
+          - private-fields
