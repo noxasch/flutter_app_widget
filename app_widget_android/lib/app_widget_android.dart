@@ -1,8 +1,2 @@
-
-import 'app_widget_android_platform_interface.dart';
-
-class AppWidgetAndroid {
-  Future<String?> getPlatformVersion() {
-    return AppWidgetAndroidPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/app_widget_android_platform.dart';
+export 'src/app_widget_android_plugin.dart';

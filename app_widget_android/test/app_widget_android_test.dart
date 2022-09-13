@@ -1,29 +1,39 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:app_widget_android/app_widget_android.dart';
-import 'package:app_widget_android/app_widget_android_platform_interface.dart';
-import 'package:app_widget_android/app_widget_android_method_channel.dart';
+import 'package:app_widget_platform_interface/app_widget_platform_interface.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-class MockAppWidgetAndroidPlatform 
+class MockAppWidgetAndroidPlatform
     with MockPlatformInterfaceMixin
-    implements AppWidgetAndroidPlatform {
-
+    implements AppWidgetPlatform {
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  Future<void> configureWidget() {
+    // TODO: implement configureWidget
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateWidget() {
+    // TODO: implement updateWidget
+    throw UnimplementedError();
+  }
 }
 
 void main() {
-  final AppWidgetAndroidPlatform initialPlatform = AppWidgetAndroidPlatform.instance;
+  final AppWidgetPlatform initialPlatform = MockAppWidgetAndroidPlatform();
 
-  test('$MethodChannelAppWidgetAndroid is the default instance', () {
-    expect(initialPlatform, isInstanceOf<MethodChannelAppWidgetAndroid>());
+  test('$AppWidgetAndroid is the default instance', () {
+    expect(initialPlatform, isInstanceOf<AppWidgetAndroid>());
   });
 
   test('getPlatformVersion', () async {
-    AppWidgetAndroid appWidgetAndroidPlugin = AppWidgetAndroid();
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
     MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
-    AppWidgetAndroidPlatform.instance = fakePlatform;
-  
+    AppWidgetPlatform.instance = fakePlatform;
+
     expect(await appWidgetAndroidPlugin.getPlatformVersion(), '42');
   });
 }

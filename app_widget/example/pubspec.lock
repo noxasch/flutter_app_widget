@@ -8,6 +8,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  app_widget_android:
+    dependency: transitive
+    description:
+      path: "../../app_widget_android"
+      relative: true
+    source: path
+    version: "0.0.1"
   app_widget_platform_interface:
     dependency: transitive
     description:

@@ -1,3 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="tech.noxasch.app_widget_android">
+  package="tech.noxasch.app_widget">
+    <!-- Implement this in app -->
+<!--  <application>-->
+<!--        <receiver android:exported="false" android:name="tech.noxasch.app_widget.ConfigureAppWidget">-->
+<!--           <intent-filter>-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+<!--    </application>-->
 </manifest>

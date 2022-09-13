@@ -1,29 +1,41 @@
-// import 'package:flutter_test/flutter_test.dart';
-// import 'package:app_widget/app_widget.dart';
-// import 'package:app_widget/app_widget_platform_interface.dart';
-// import 'package:app_widget/app_widget_method_channel.dart';
-// import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:app_widget/app_widget.dart';
 
-// class MockAppWidgetPlatform
-//     with MockPlatformInterfaceMixin
-//     implements AppWidgetPlatform {
+import 'package:app_widget_platform_interface/app_widget_platform_interface.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-//   @override
-//   Future<String?> getPlatformVersion() => Future.value('42');
-// }
+class MockAppWidgetPlatform
+    with MockPlatformInterfaceMixin
+    implements AppWidgetPlatform {
+  @override
+  Future<String?> getPlatformVersion() => Future.value('42');
 
-// void main() {
-//   final AppWidgetPlatform initialPlatform = AppWidgetPlatform.instance;
+  @override
+  Future configureWidget() {
+    // TODO: implement configureWidget
+    throw UnimplementedError();
+  }
 
-//   test('$MethodChannelAppWidget is the default instance', () {
-//     expect(initialPlatform, isInstanceOf<MethodChannelAppWidget>());
-//   });
+  @override
+  Future updateWidget() {
+    // TODO: implement updateWidget
+    throw UnimplementedError();
+  }
+}
 
-//   test('getPlatformVersion', () async {
-//     AppWidget appWidgetPlugin = AppWidget();
-//     MockAppWidgetPlatform fakePlatform = MockAppWidgetPlatform();
-//     AppWidgetPlatform.instance = fakePlatform;
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  // final AppWidgetPlatform initialPlatform = AppWidgetPlatform.instance;
 
-//     expect(await appWidgetPlugin.getPlatformVersion(), '42');
-//   });
-// }
+  // test('Null is the default instance', () {
+  //   expect(initialPlatform, isNull);
+  // });
+
+  test('getPlatformVersion', () async {
+    AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+    MockAppWidgetPlatform fakePlatform = MockAppWidgetPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(await appWidgetPlugin.getPlatformVersion(), '42');
+  });
+}

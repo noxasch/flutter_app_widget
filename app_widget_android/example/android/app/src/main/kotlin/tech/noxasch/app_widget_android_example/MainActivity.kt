@@ -1,4 +1,4 @@
-package tech.noxasch.app_widget_android_example
+package tech.noxasch.app_widget_example
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,4 +1,4 @@
-group 'tech.noxasch.app_widget_android'
+group 'tech.noxasch.app_widget'
 version '1.0-SNAPSHOT'
 
 buildscript {
