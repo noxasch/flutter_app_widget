@@ -85,15 +85,49 @@ There are two way we can update the widget:
           android:resource="@xml/app_widget_example_info" />
   </receiver>
   ```
-3. Create the widget provider
+4. Create the widget provider
 Inherit from Android `AppWidgetProvider` and implement the required method if needed. Since the plugin already provice interface to update widget, we can leave the `onUpdate` method and handle it on dart side.
 
     Probably you want to implement `onDeleted` method to handle cleanup like removing the widget Id from sharePrefences allow user to add multiple widget.
 
-4. Using workmanager update widget
+5. Update MainActivity to handle `onConfigure` intent
 
+```kotlin
+// add this import
+import tech.noxasch.app_widget.AppWidgetPlugin
 
+// this need to be implemented manually
+class MainActivity: FlutterActivity() {
+  override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+    super.configureFlutterEngine(flutterEngine)
 
+    // add this line
+    if (intent.action == AppWidgetManager.ACTION_APPWIDGET_CONFIGURE) {
+      handleConfigureAction()
+    }
+
+  }
+
+  // add this method
+  // implement this as static method in App so we can use like this:
+  // AppWidgetPlugin.handleConfigureAction(context, intent, widgetId)
+  private fun handleConfigureAction() {
+    val extras = intent.extras
+    val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
+    if (widgetId == 0) return
+
+    val configIntent = intent.setAction(AppWidgetPlugin.CONFIGURE_WIDGET_ACTION)
+    configIntent.putExtra("widgetId", widgetId)
+    startActivity(configIntent)
+  }
+}
+```
+
+6. Implement android WidgetProvider
+
+7. Handling update in native (Optional) - TODO
+
+7. Implement workmanager in flutter - TODO
 
 ### In App Usage and Dart/Flutter Api
 
@@ -109,9 +143,9 @@ appWidgetPlugin.cancelConfigure()
 #### handling onConfigureWidget
 
 ```dart
-
 void onConfigureWidget(int widgetId) {
   // handle widget configuration
+  // use launchUrl and deeplink redirect to configuration page
 }
 
 // onConfigureWidget callback are optional
@@ -134,6 +168,35 @@ appWidgetPlugin.configureWidget(
 ```
 
 #### handling onClickWidget
+
+```dart
+void onClickWidget(int widgetId) {
+  // handle click widget event
+  // do something
+  // use launchUrl and deeplink redirect
+}
+
+// onClickWidget callback are optional
+final appWidgetPlugin = AppWidgetPlugin(
+  onConfigureWidget: onConfigureWidget,
+  onClickWidget: onClickWidget
+);
+```
+
+#### Updating widget
+Most of the time you'll want to update widget via workmanager. See below
+how to use the extension in workmanager
+
+```dart
+appWidgetPlugin.updateWidget(
+  androidAppName: 'tech.noxasch.app_widget_example',
+  widgetId: _widgetId!,
+  widgetLayout: 'example_layout',
+  textViewIdValueMap: {
+    'widget_title': 'MY WIDGET',
+    'widget_message': 'This is my widget message'
+});
+```
 
 #### Using Workmanager
 

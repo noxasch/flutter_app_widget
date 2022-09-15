@@ -2,8 +2,24 @@ import 'package:app_widget_android/app_widget_android.dart';
 import 'package:app_widget_platform_interface/app_widget_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 
+/// Instantiate plugin instance and register callback optional callback
+///
+/// Accept [onConfigureWidget] callback method - optional <br>
+/// Accept [onClickWidget] callback method - optional <br>
+///
+/// onClickWidget payload:
+///
+/// ```dart
+/// {
+///  "widgetId" : 23,
+///  "itemId": 232,  // (if set during update/configure otherwise it is null)
+///  "stringUid": "dadas", // (if set during update/configure otherwise it is null)
+/// }
+/// ```
+///
 class AppWidgetPlugin {
   factory AppWidgetPlugin({
+    /// callback function when the widget is first created
     void Function(int widgetId)? onConfigureWidget,
     void Function(Map<String, dynamic> payload)? onClickWidget,
   }) {
@@ -54,7 +70,25 @@ class AppWidgetPlugin {
 
   /// Configure Widget for the first time
   ///
-  /// widgetId is from configureWidget event
+  /// [androidAppName] should be the app package name.
+  /// eg: com.example.myapp
+  ///
+  /// [widgetLayout] is the layout filename without extension
+  ///
+  /// Get the [WidgetId] from [onConfigureWidget] callback.
+  ///
+  /// [textViewIdValueMap] is the id defined in layout `<TextView android:id="@+id/widget_title"`
+  ///
+  /// ```dart
+  /// {
+  ///   "widget_title": "TEXT TO DISPLAY",
+  ///   "widget_subtitle": "TEXT TO DISPLAY"
+  /// }
+  /// ```
+  ///
+  /// accept optional [itemId] and [stringUid] which can be include
+  /// in onClickWidget callback.
+  ///
   Future<bool?> configureWidget({
     required String androidAppName,
     required int widgetId,
@@ -73,7 +107,18 @@ class AppWidgetPlugin {
     );
   }
 
-  /// reload all widgets
+  /// Force reload all widgets
+  ///
+  /// This will trigger onUpdate method on android side.
+  /// Use this if you handle widget update from `AppWidgetProvider`
+  /// otherwise this method is useless.
+  ///
+  /// [androidAppName] should be the app package name. <br>
+  /// eg: `com.example.myapp`
+  ///
+  /// [androidProviderName] is the provider class name which also it's filename <br>
+  /// eg: `AppWidgetExampleProvider`
+  ///
   Future<bool?> reloadWidgets({
     required String androidAppName,
     required String androidProviderName,
@@ -84,9 +129,27 @@ class AppWidgetPlugin {
     );
   }
 
-  /// update widget view
+  /// Update widget view manually
   ///
-  /// this should be use after widget has been configure
+  /// [androidAppName] should be the app package name.
+  /// eg: com.example.myapp
+  ///
+  /// [widgetLayout] is the layout filename without extension
+  ///
+  /// Get the [WidgetId] from [onConfigureWidget] callback.
+  ///
+  /// [textViewIdValueMap] is the id defined in layout `<TextView android:id="@+id/widget_title"`
+  ///
+  /// ```dart
+  /// {
+  ///   "widget_title": "TEXT TO DISPLAY",
+  ///   "widget_subtitle": "TEXT TO DISPLAY"
+  /// }
+  /// ```
+  ///
+  /// Accept optional [itemId] and [stringUid] which can be include
+  /// in onClickWidget callback.
+  ///
   Future<bool?> updateWidget({
     required String androidAppName,
     required int widgetId,
@@ -105,8 +168,7 @@ class AppWidgetPlugin {
     );
   }
 
-  /// check if widget with given Id exist
-  ///
+  /// Check if widget with given [widgetId] exist
   Future<bool?> widgetExist(int widgetId) async {
     return AppWidgetPlatform.instance.widgetExist(widgetId);
   }
