@@ -1,7 +1,7 @@
 name: app_widget
 description: flutter app widget
 version: 0.0.1
-homepage:
+homepage: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget
 publish_to: 'none'
 
 environment:

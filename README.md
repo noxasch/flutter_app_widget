@@ -1,4 +1,4 @@
-# App Widget v0.1.0
+# App Widget v0.0.1
 App Widget plugin for flutter
 
 ## Usage
