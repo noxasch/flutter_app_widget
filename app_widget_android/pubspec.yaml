@@ -1,7 +1,8 @@
 name: app_widget_android
 description: flutter app widget
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget_android
+issue_tracker: https://github.com/noxasch/flutter_app_widget/issues
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -11,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  app_widget_platform_interface: ^0.0.1
+  app_widget_platform_interface: ^0.0.2
 
 dev_dependencies:
   flutter_test:
