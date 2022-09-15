@@ -22,7 +22,20 @@ void main() {
         completion(true));
   });
 
-  testWidgets('udpateWidget', (tester) async {
+  testWidgets('cancelConfigureWidget', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+    final res = await appWidgetPlugin.cancelConfigureWidget();
+    expect(res, isTrue);
+  });
+
+  testWidgets('getWidgetIds', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+    final res = await appWidgetPlugin.getWidgetIds(
+        androidProviderName: 'AppWidgetExampleProvider');
+    expect(res, []);
+  });
+
+  testWidgets('updateWidget', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
     expect(
@@ -37,18 +50,6 @@ void main() {
         completion(true));
   });
 
-  testWidgets('Can check if widget exist', (tester) async {
-    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
-    final res = await appWidgetPlugin.widgetExist(12);
-    expect(res, isFalse);
-  });
-
-  testWidgets('Can send cancel signal', (tester) async {
-    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
-    final res = await appWidgetPlugin.cancelConfigureWidget();
-    expect(res, isTrue);
-  });
-
   testWidgets('reloadWidget throw expected error', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
@@ -58,5 +59,11 @@ void main() {
             androidProviderName: 'AppWidgetExampleProvider'),
         throwsA(isA<PlatformException>()
             .having((e) => e.code == '-2', '', isTrue)));
+  });
+
+  testWidgets('widgetExist', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+    final res = await appWidgetPlugin.widgetExist(12);
+    expect(res, isFalse);
   });
 }
