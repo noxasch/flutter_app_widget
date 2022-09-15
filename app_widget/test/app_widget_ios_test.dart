@@ -6,11 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 class MockAppWidgetPugin implements AppWidgetPlugin {
   @override
-  Future<String?> getPlatformVersion() async {
-    return '42';
-  }
-
-  @override
   Future<bool> cancelConfigureWidget() async {
     return true;
   }
