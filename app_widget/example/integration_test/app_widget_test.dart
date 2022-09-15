@@ -10,47 +10,50 @@ void main() {
   testWidgets('configureWidget', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
-    expect(
-        appWidgetPlugin.configureWidget(
-          androidAppName: 'tech.noxasch.app_widget_example',
-          widgetId: 1,
-          widgetLayout: 'example_layout',
-          itemId: 1,
-          stringUid: 'uid',
-          textViewIdValueMap: {'widget_title': 'my title'},
-        ),
-        completion(true));
+    final res = await appWidgetPlugin.configureWidget(
+      androidAppName: 'tech.noxasch.app_widget_example',
+      widgetId: 1,
+      widgetLayout: 'example_layout',
+      itemId: 1,
+      stringUid: 'uid',
+      textViewIdValueMap: {'widget_title': 'my title'},
+    );
+    expect(res, isTrue);
   });
 
   testWidgets('cancelConfigureWidget', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+
     final res = await appWidgetPlugin.cancelConfigureWidget();
+
     expect(res, isTrue);
   });
 
   testWidgets('getWidgetIds', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+
     final res = await appWidgetPlugin.getWidgetIds(
         androidProviderName: 'AppWidgetExampleProvider');
+
     expect(res, []);
   });
 
   testWidgets('updateWidget', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
-    expect(
-        appWidgetPlugin.updateWidget(
-          androidAppName: 'tech.noxasch.app_widget_example',
-          widgetId: 1,
-          widgetLayout: 'example_layout',
-          itemId: 1,
-          stringUid: 'uid',
-          textViewIdValueMap: {'widget_title': 'my title'},
-        ),
-        completion(true));
+    final res = await appWidgetPlugin.updateWidget(
+      androidAppName: 'tech.noxasch.app_widget_example',
+      widgetId: 1,
+      widgetLayout: 'example_layout',
+      itemId: 1,
+      stringUid: 'uid',
+      textViewIdValueMap: {'widget_title': 'my title'},
+    );
+
+    expect(res, isTrue);
   });
 
-  testWidgets('reloadWidget throw expected error', (tester) async {
+  testWidgets('reloadWidgets throw expected error', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
     expect(
@@ -63,7 +66,9 @@ void main() {
 
   testWidgets('widgetExist', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+
     final res = await appWidgetPlugin.widgetExist(12);
+
     expect(res, isFalse);
   });
 }
