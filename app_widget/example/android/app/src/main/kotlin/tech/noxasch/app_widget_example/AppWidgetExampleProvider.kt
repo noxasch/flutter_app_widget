@@ -9,10 +9,9 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.accessibility.AccessibilityEventCompat.setAction
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import tech.noxasch.app_widget.AppWidgetBroadcastReceiver
 import tech.noxasch.app_widget.AppWidgetPlugin
 
-class AppWidgetExampleProvider : AppWidgetBroadcastReceiver() {
+class AppWidgetExampleProvider : AppWidgetProvider() {
     override fun onUpdate(
         context: Context?,
         appWidgetManager: AppWidgetManager?,

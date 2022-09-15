@@ -45,6 +45,13 @@ class AppWidgetPlugin {
   /// - widgetId
   final void Function(Map<String, dynamic> payload)? _onClickWidget;
 
+  /// Cancel widget configuration
+  ///
+  /// this will send Activity.RESULT_CANCELLED on android
+  Future<bool?> cancelConfigureWidget() async {
+    return AppWidgetPlatform.instance.cancelConfigureWidget();
+  }
+
   /// Configure Widget for the first time
   ///
   /// widgetId is from configureWidget event
@@ -66,19 +73,6 @@ class AppWidgetPlugin {
     );
   }
 
-  /// check if widget with given Id exist
-  ///
-  Future<bool?> widgetExist(int widgetId) async {
-    return AppWidgetPlatform.instance.widgetExist(widgetId);
-  }
-
-  /// Cancel widget configuration
-  ///
-  /// this will send Activity.RESULT_CANCELLED on android
-  Future<bool?> cancelConfigureWidget() async {
-    return AppWidgetPlatform.instance.cancelConfigureWidget();
-  }
-
   /// reload all widgets
   Future<bool?> reloadWidgets({
     required String androidAppName,
@@ -88,5 +82,32 @@ class AppWidgetPlugin {
       androidAppName: androidAppName,
       androidProviderName: androidProviderName,
     );
+  }
+
+  /// update widget view
+  ///
+  /// this should be use after widget has been configure
+  Future<bool?> updateWidget({
+    required String androidAppName,
+    required int widgetId,
+    required String widgetLayout,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+    String? stringUid,
+  }) async {
+    return AppWidgetPlatform.instance.updateWidget(
+      androidAppName: androidAppName,
+      widgetId: widgetId,
+      widgetLayout: widgetLayout,
+      textViewIdValueMap: textViewIdValueMap,
+      itemId: itemId,
+      stringUid: stringUid,
+    );
+  }
+
+  /// check if widget with given Id exist
+  ///
+  Future<bool?> widgetExist(int widgetId) async {
+    return AppWidgetPlatform.instance.widgetExist(widgetId);
   }
 }

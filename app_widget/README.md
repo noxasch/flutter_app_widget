@@ -95,7 +95,9 @@ Inherit from Android `AppWidgetProvider` and implement the required method if ne
 
 
 
-### In App Usage
+### In App Usage and Dart/Flutter Api
+
+This section shows how to use the exposed api by the plugin in your app.
 
 ```dart
 // instantiate appWidgetPlugin
@@ -104,4 +106,40 @@ appWidgetPlugin.configureWidget(...)
 appWidgetPlugin.cancelConfigure()
 ```
 
-## TODO
+#### handling onConfigureWidget
+
+```dart
+
+void onConfigureWidget(int widgetId) {
+  // handle widget configuration
+}
+
+// onConfigureWidget callback are optional
+// without this it will use default value that you set
+final appWidgetPlugin = AppWidgetPlugin(
+  onConfigureWidget: onConfigureWidget
+);
+
+// this changes will reflect on the widget
+// only use this method in widget configuration screen as
+// it method will close the app which require to signal the widget config completion
+appWidgetPlugin.configureWidget(
+  androidAppName: 'tech.noxasch.app_widget_example',
+  widgetId: _widgetId!,
+  widgetLayout: 'example_layout',
+  textViewIdValueMap: {
+    'widget_title': 'MY WIDGET',
+    'widget_message': 'This is my widget message'
+});
+```
+
+#### handling onClickWidget
+
+#### Using Workmanager
+
+TODO
+
+## Checklist
+- [x] Unit Test
+- [ ] Readme documentation
+- [ ] Update example app

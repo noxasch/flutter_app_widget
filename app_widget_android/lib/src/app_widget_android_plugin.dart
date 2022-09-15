@@ -22,7 +22,6 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   final void Function(Map<String, dynamic> payload)? _onClickWidget;
 
   Future<dynamic> handleMethod(MethodCall call) async {
-    print('NOXASCH_PLUGIN_DART: methodCall ${call.method}');
     switch (call.method) {
       case onConfigureWidgetCallback:
         final widgetId = call.arguments['widgetId'] as int;
@@ -37,11 +36,6 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
       default:
         throw UnimplementedError('Method ${call.method} is not implemented!');
     }
-  }
-
-  @override
-  Future<String?> getPlatformVersion() {
-    return _methodChannel.invokeMethod<String>('getPlatformVersion');
   }
 
   @override
@@ -71,6 +65,25 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     String? stringUid,
   }) {
     return _methodChannel.invokeMethod<bool>('configureWidget', {
+      'androidAppName': androidAppName,
+      'widgetLayout': widgetLayout,
+      'widgetId': widgetId,
+      'textViewIdValueMap': textViewIdValueMap,
+      'itemId': itemId,
+      'stringUid': stringUid,
+    });
+  }
+
+  @override
+  Future<bool?> updateWidget({
+    String? androidAppName,
+    int? widgetId,
+    String? widgetLayout,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+    String? stringUid,
+  }) {
+    return _methodChannel.invokeMethod<bool>('updateWidget', {
       'androidAppName': androidAppName,
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,

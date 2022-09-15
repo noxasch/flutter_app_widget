@@ -23,6 +23,8 @@ void main() {
           return true;
         case 'reloadWidgets':
           return true;
+        case 'updateWidget':
+          return true;
         case 'widgetExist':
           return true;
         default:
@@ -57,6 +59,36 @@ void main() {
       expect(log, <Matcher>[
         isMethodCall(
           'configureWidget',
+          arguments: <String, Object>{
+            'androidAppName': 'appname',
+            'widgetId': 1,
+            'itemId': 1,
+            'widgetLayout': 'layoutname',
+            'textViewIdValueMap': {},
+            'stringUid': 'uid'
+          },
+        )
+      ]);
+    });
+
+    test('updateWidget', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.updateWidget(
+          androidAppName: 'appname',
+          widgetId: 1,
+          itemId: 1,
+          widgetLayout: 'layoutname',
+          textViewIdValueMap: {},
+          stringUid: 'uid',
+        ),
+        completion(true),
+      );
+
+      expect(log, <Matcher>[
+        isMethodCall(
+          'updateWidget',
           arguments: <String, Object>{
             'androidAppName': 'appname',
             'widgetId': 1,

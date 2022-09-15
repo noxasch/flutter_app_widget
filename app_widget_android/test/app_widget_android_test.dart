@@ -3,25 +3,60 @@ import 'package:app_widget_platform_interface/app_widget_platform_interface.dart
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+void main() {
+  final AppWidgetPlatform initialPlatform = MockAppWidgetAndroidPlatform();
+
+  test('$AppWidgetAndroid is the default instance', () {
+    expect(initialPlatform, isInstanceOf<MockAppWidgetAndroidPlatform>());
+  });
+
+  test('cancelConfigureWidget', () async {
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
+    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(await appWidgetAndroidPlugin.cancelConfigureWidget(), isTrue);
+  });
+
+  test('configureWidget', () async {
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
+    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(await appWidgetAndroidPlugin.configureWidget(), isTrue);
+  });
+
+  test('reloadWidgets', () async {
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
+    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(await appWidgetAndroidPlugin.reloadWidgets(), isTrue);
+  });
+
+  test('updateWidget', () async {
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
+    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(await appWidgetAndroidPlugin.cancelConfigureWidget(), isTrue);
+  });
+
+  test('widgetExist', () async {
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
+    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(await appWidgetAndroidPlugin.widgetExist(1), isTrue);
+  });
+}
+
 class MockAppWidgetAndroidPlatform
     with MockPlatformInterfaceMixin
     implements AppWidgetPlatform {
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
-
-  @override
-  Future<bool?> cancelConfigureWidget() {
-    // TODO: implement cancelConfigureWidget
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool?> reloadWidgets({
-    String? androidAppName,
-    String? androidProviderName,
-  }) {
-    // TODO: implement reloadWidgets
-    throw UnimplementedError();
+  Future<bool?> cancelConfigureWidget() async {
+    return true;
   }
 
   @override
@@ -33,30 +68,32 @@ class MockAppWidgetAndroidPlatform
     Map<String, String>? textViewIdValueMap,
     int? itemId,
     String? stringUid,
-  }) {
-    // TODO: implement configureWidget
-    throw UnimplementedError();
+  }) async {
+    return true;
   }
 
   @override
-  Future<bool?> widgetExist(int widgetId) {
-    // TODO: implement widgetExist
-    throw UnimplementedError();
+  Future<bool?> reloadWidgets({
+    String? androidAppName,
+    String? androidProviderName,
+  }) async {
+    return true;
   }
-}
 
-void main() {
-  final AppWidgetPlatform initialPlatform = MockAppWidgetAndroidPlatform();
+  @override
+  Future<bool?> updateWidget({
+    String? androidAppName,
+    int? widgetId,
+    String? widgetLayout,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+    String? stringUid,
+  }) async {
+    return true;
+  }
 
-  test('$AppWidgetAndroid is the default instance', () {
-    expect(initialPlatform, isInstanceOf<AppWidgetAndroid>());
-  });
-
-  test('getPlatformVersion', () async {
-    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
-    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
-    AppWidgetPlatform.instance = fakePlatform;
-
-    expect(await appWidgetAndroidPlugin.getPlatformVersion(), '42');
-  });
+  @override
+  Future<bool?> widgetExist(int widgetId) async {
+    return true;
+  }
 }

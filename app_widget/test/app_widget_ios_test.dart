@@ -34,6 +34,18 @@ class MockAppWidgetPugin implements AppWidgetPlugin {
   Future<bool> widgetExist(int widgetId) async {
     return true;
   }
+
+  @override
+  Future<bool?> updateWidget({
+    required String androidAppName,
+    required int widgetId,
+    required String widgetLayout,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+    String? stringUid,
+  }) async {
+    return true;
+  }
 }
 
 void main() {
@@ -78,6 +90,27 @@ void main() {
 
       expect(
         appWidgetPlugin.configureWidget(
+          androidAppName: '',
+          widgetId: 1,
+          itemId: 1,
+          widgetLayout: '',
+          textViewIdValueMap: {},
+        ),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
+      );
+    });
+
+    test('updateWidget', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.updateWidget(
           androidAppName: '',
           widgetId: 1,
           itemId: 1,

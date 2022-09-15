@@ -55,8 +55,6 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     val ON_CONFIGURE_WIDGET_CALLBACK = "onConfigureWidget"
     @JvmStatic
     val ON_ClICK_WIDGET_CALLBACK = "onClickWidget"
-    @JvmStatic
-    val ON_UPDATE_WIDGETS_CALLBACK = "onUpdateWidgets"
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -67,11 +65,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when (call.method) {
-      "getPlatformVersion" -> {
-        result.success("Android ${android.os.Build.VERSION.RELEASE}")
-      }
       "reloadWidgets" -> reloadWidgets(call, result)
       "configureWidget" -> configureWidget(call, result)
+      "updateWidget" -> updateWidget(call, result)
       "cancelConfigureWidget" -> cancelConfigureWidget(result)
       "widgetExist" -> widgetExist(call, result)
       else -> {
@@ -106,7 +102,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     }
   }
 
-  /// This should be called when updating individual widgets
+  /// This should be called when configuring individual widgets
   private fun configureWidget(@NonNull call: MethodCall, @NonNull result: Result) {
     try {
       if (activity == null) return result.error("-2", "Not attached to any activity!", null)
@@ -117,34 +113,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
         ?: return result.error("-1", "widgetId is required!", null)
       val widgetLayout = call.argument<String>("widgetLayout")
         ?: return result.error("-1", "widgetLayout is required!", null)
-      // allow widget to have any number of textview
-      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
-      // expose itemId if want to track widget by unique integer
-      val itemId = call.argument<Int>("itemId")
-      val stringUid = call.argument<String>("stringUid")
 
+      setWidget(androidAppName, widgetId, widgetLayout, call)
 
-      try {
-        val activityClass = Class.forName("$androidAppName.MainActivity")
-        val widgetLayoutId: Int =
-          context.resources.getIdentifier(widgetLayout, "layout", androidAppName)
-        val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
-        val views = RemoteViews(androidAppName, widgetLayoutId)
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-
-        Log.i("NOXASCH_PLUGIN", "Class: ${activityClass.name}")
-
-        setWidgetView(
-          androidAppName,
-          views,
-          widgetId,
-          pendingIntent,
-          appWidgetManager,
-          textViewIdValueMap,
-        )
-      } catch (exception: Exception) {
-        result.error("-2", exception.message, exception)
-      }
       // This is important to confirm the widget
       // otherwise it's considered cancelled and widget will be removed
       val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -153,6 +124,56 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       result.success(true)
     } catch (exception: Exception) {
       result.error("-2", exception.message, exception)
+    }
+  }
+
+  // This should only be called after the widget has been configure for the first time
+  private fun updateWidget(@NonNull call: MethodCall, @NonNull result: Result) {
+    try {
+      val androidAppName = call.argument<String>("androidAppName")
+        ?: return result.error("-1", "androidAppName is required!", null)
+      val widgetId = call.argument<Int>("widgetId")
+        ?: return result.error("-1", "widgetId is required!", null)
+      val widgetLayout = call.argument<String>("widgetLayout")
+        ?: return result.error("-1", "widgetLayout is required!", null)
+
+      setWidget(androidAppName, widgetId, widgetLayout, call)
+
+      return result.success(true)
+    } catch (exception: Exception) {
+      return result.error("-2", exception.message, exception)
+    }
+  }
+
+  private fun setWidget(
+    androidAppName: String,
+    widgetId: Int,
+    widgetLayout: String,
+    call: MethodCall,
+  ) {
+    try {
+      // allow widget to have any number of textview
+      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
+      // expose itemId if want to track widget by unique integer
+      val itemId = call.argument<Int>("itemId")
+      val stringUid = call.argument<String>("stringUid")
+
+      val activityClass = Class.forName("$androidAppName.MainActivity")
+      val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", androidAppName)
+      val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
+      val views = RemoteViews(androidAppName, widgetLayoutId)
+      val appWidgetManager = AppWidgetManager.getInstance(context)
+
+      setWidgetView(
+        androidAppName,
+        views,
+        widgetId,
+        pendingIntent,
+        appWidgetManager,
+        textViewIdValueMap,
+      )
+    } catch (exception: Exception) {
+      throw exception
     }
   }
 
