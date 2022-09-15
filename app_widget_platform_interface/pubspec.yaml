@@ -1,6 +1,6 @@
 name: app_widget_platform_interface
 description: flutter app widget
-version: 0.0.2
+version: 0.0.3
 homepage: https://noxasch.tech/
 repository: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget_platform_interface
 issue_tracker: https://github.com/noxasch/flutter_app_widget/issues
