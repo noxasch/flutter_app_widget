@@ -12,8 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  app_widget_platform_interface:
-    path: ../app_widget_platform_interface
+  app_widget_platform_interface: ^0.0.1
 
 dev_dependencies:
   flutter_test:

@@ -1,7 +1,7 @@
 # app_widget_android
 
-flutter app widget
-
+This package are meant to use by app_widget. If you are using this on it's own, you
+are on your own.
 ## Getting Started
 
 This project is a starting point for a Flutter
