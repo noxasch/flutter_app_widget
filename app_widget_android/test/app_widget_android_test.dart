@@ -10,14 +10,30 @@ class MockAppWidgetAndroidPlatform
   Future<String?> getPlatformVersion() => Future.value('42');
 
   @override
-  Future<void> configureWidget() {
-    // TODO: implement configureWidget
+  Future<bool?> cancelConfigureWidget() {
+    // TODO: implement cancelConfigureWidget
     throw UnimplementedError();
   }
 
   @override
-  Future<void> updateWidget() {
-    // TODO: implement updateWidget
+  Future<bool?> reloadWidgets({
+    String? androidAppName,
+    String? androidProviderName,
+  }) {
+    // TODO: implement reloadWidgets
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> configureWidget({
+    String? androidAppName,
+    int? widgetId,
+    String? widgetLayout,
+    String? widgetContainerName,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+  }) {
+    // TODO: implement configureWidget
     throw UnimplementedError();
   }
 }
