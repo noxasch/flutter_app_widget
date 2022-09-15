@@ -1,13 +1,15 @@
-# App Widget v0.0.1
-App Widget plugin for flutter
+# App Widget
+App Widget / Home Screen widget plugin for flutter app
 
 ## Usage
 
 Please see `app_widget` subdirectory for the usage documentation.
 
 ## Plaform Support
-- [x] Android - In development
-- [ ] iOS - TBD
+
+| Android | iOS |
+| :-----: | :-: |
+|   ✔️    |   |
 
 ## Project Structure
 
@@ -24,6 +26,8 @@ plugin.
 4. Create a PR
 
 ## Android Integration Test
+- Make sure to run on the latest and minSdk supported
+
 in `app_widget/example/integration_test/app_widget_test.dart`
 
 ```sh

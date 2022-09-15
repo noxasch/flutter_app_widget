@@ -4,14 +4,17 @@ flutter app widget
 
 ## Getting Started
 
-## Platform support
-- [x] Android
-- [ ] iOS
+Since flutter engine are build on android activity, we cannot directly build
+the the widget interface using flutter. Hence it need to be build using the native
+way. This plugin attempt to exposed as much useful API to flutter to reduce
+going back and forth to native.
+## Plaform Support
+
+| Android | iOS |
+| :-----: | :-: |
+|   ✔️    |   |
 
 ### Android
-Since flutter engine are build on android activity, we cannot directly build
-the the widget interface using flutter. Hence it need to be build using XML
-the android way.
 
 This plugin introduce some api from the android native and provide some suggestion on how
 to include an app widget with you flutter application.
@@ -204,5 +207,6 @@ TODO
 
 ## Checklist
 - [x] Unit Test
-- [ ] Readme documentation
+- [ ] update documentation
 - [ ] Update example app
+- [ ] Update Screenshot
