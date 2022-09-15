@@ -3,6 +3,8 @@ package tech.noxasch.app_widget
 import android.app.Activity
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProvider
+import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -29,26 +31,32 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
+  private lateinit var channel: MethodChannel
   private lateinit var context: Context
 
-  private var activity : Activity? = null
+  private var activity: Activity? = null
 
   /// namespacing constant that need to be access from outside.
   /// similar to android string constant pattern
   companion object {
-    @JvmStatic val CHANNEL = "tech.noxasch.flutter/app_widget"
-    @JvmStatic val CONFIGURE_WIDGET_ACTION = "tech.noxasch.flutter.configureWidget"
-    @JvmStatic val CLICK_WIDGET_ACTION = "tech.noxasch.flutter.clickWidget"
-    @JvmStatic val UPDATE_WIDGETS_ACTION = "tech.noxasch.flutter.updateWidgets"
-    @JvmStatic val DELETED_WIDGETS_ACTION = "tech.noxasch.flutter.deleteWidgets"
-    @JvmStatic val EXTRA_APP_ITEM_ID = "appItemId"
-    @JvmStatic val EXTRA_APP_STRING_UID = "appStringUid"
+    @JvmStatic
+    val CHANNEL = "tech.noxasch.flutter/app_widget"
+    @JvmStatic
+    val CONFIGURE_WIDGET_ACTION = "tech.noxasch.flutter.configureWidget"
+    @JvmStatic
+    val CLICK_WIDGET_ACTION = "tech.noxasch.flutter.clickWidget"
 
-    @JvmStatic val ON_CONFIGURE_WIDGET_CALLBACK = "onConfigureWidget"
-    @JvmStatic val ON_ClICK_WIDGET_CALLBACK = "onClickWidget"
-    @JvmStatic val ON_UPDATE_WIDGETS_CALLBACK = "onUpdateWidgets"
-    @JvmStatic val ON_DELETED_WIDGETS_CALLBACK = "onDeletedWidgets"
+    @JvmStatic
+    val EXTRA_APP_ITEM_ID = "appItemId"
+    @JvmStatic
+    val EXTRA_APP_STRING_UID = "appStringUid"
+
+    @JvmStatic
+    val ON_CONFIGURE_WIDGET_CALLBACK = "onConfigureWidget"
+    @JvmStatic
+    val ON_ClICK_WIDGET_CALLBACK = "onClickWidget"
+    @JvmStatic
+    val ON_UPDATE_WIDGETS_CALLBACK = "onUpdateWidgets"
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -58,19 +66,14 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    when(call.method) {
+    when (call.method) {
       "getPlatformVersion" -> {
         result.success("Android ${android.os.Build.VERSION.RELEASE}")
       }
-      "reloadWidgets" -> {
-        reloadWidgets(call, result)
-      }
-      "configureWidget" -> {
-        configureWidget(call,result)
-      }
-      "cancelConfigureWidget" -> {
-        cancelConfigureWidget(result)
-      }
+      "reloadWidgets" -> reloadWidgets(call, result)
+      "configureWidget" -> configureWidget(call, result)
+      "cancelConfigureWidget" -> cancelConfigureWidget(result)
+      "widgetExist" -> widgetExist(call, result)
       else -> {
         result.notImplemented()
       }
@@ -81,10 +84,23 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     channel.setMethodCallHandler(null)
   }
 
-  private fun cancelConfigureWidget( @NonNull result: Result) {
+  private fun cancelConfigureWidget(@NonNull result: Result) {
     try {
       activity!!.setResult(Activity.RESULT_CANCELED)
       result.success(true)
+    } catch (exception: Exception) {
+      result.error("-2", exception.message, exception)
+    }
+  }
+
+  private fun widgetExist(@NonNull call: MethodCall, @NonNull result: Result) {
+    val widgetId = call.argument<Int>("widgetId") ?: return result.success(false)
+    try {
+      val widgetManager = AppWidgetManager.getInstance(context)
+      val widgetInfo: AppWidgetProviderInfo =
+        widgetManager.getAppWidgetInfo(widgetId) ?: return result.success(false)
+
+      return result.success(true)
     } catch (exception: Exception) {
       result.error("-2", exception.message, exception)
     }
@@ -96,13 +112,11 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       if (activity == null) return result.error("-2", "Not attached to any activity!", null)
 
       val androidAppName = call.argument<String>("androidAppName")
-          ?: return result.error("-1", "androidAppName is required!", null)
+        ?: return result.error("-1", "androidAppName is required!", null)
       val widgetId = call.argument<Int>("widgetId")
         ?: return result.error("-1", "widgetId is required!", null)
       val widgetLayout = call.argument<String>("widgetLayout")
         ?: return result.error("-1", "widgetLayout is required!", null)
-      val widgetContainerName = call.argument<String>("widgetContainerName")
-        ?: return result.error("-1", "widgetContainerName is required!", null)
       // allow widget to have any number of textview
       val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
       // expose itemId if want to track widget by unique integer
@@ -112,19 +126,18 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
       try {
         val activityClass = Class.forName("$androidAppName.MainActivity")
-        val widgetLayoutId : Int = context.resources.getIdentifier(widgetLayout, "layout", androidAppName)
-        val widgetContainerId : Int = context.resources.getIdentifier(widgetContainerName, "layout", androidAppName)
+        val widgetLayoutId: Int =
+          context.resources.getIdentifier(widgetLayout, "layout", androidAppName)
         val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
         val views = RemoteViews(androidAppName, widgetLayoutId)
         val appWidgetManager = AppWidgetManager.getInstance(context)
 
         Log.i("NOXASCH_PLUGIN", "Class: ${activityClass.name}")
 
-        configureWidgetView(
+        setWidgetView(
           androidAppName,
           views,
           widgetId,
-          widgetContainerId,
           pendingIntent,
           appWidgetManager,
           textViewIdValueMap,
@@ -143,16 +156,15 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     }
   }
 
-  private fun configureWidgetView(
-    androidAppName : String,
-    views : RemoteViews,
-    widgetId : Int,
-    widgetContainerId: Int,
-    pendingIntent : PendingIntent,
+  private fun setWidgetView(
+    androidAppName: String,
+    views: RemoteViews,
+    widgetId: Int,
+    pendingIntent: PendingIntent,
     appWidgetManager: AppWidgetManager,
-    textViewIdValueMap : Map<String, String>?
+    textViewIdValueMap: Map<String, String>?,
+    handleOnTap: Boolean = true
   ) {
-//    val views : RemoteViews = RemoteViews(androidAppName, widgetLayoutId)
     if (textViewIdValueMap != null) {
       views.apply {
         for ((key, value) in textViewIdValueMap) {
@@ -160,10 +172,8 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
             context.resources.getIdentifier(key, "id", androidAppName)
           if (textViewId == 0) throw Exception("Id $key does not exist!")
           setTextViewText(textViewId, value)
-          setOnClickPendingIntent(textViewId, pendingIntent)
+          if (handleOnTap) setOnClickPendingIntent(textViewId, pendingIntent)
         }
-        // Container cannot be clicked
-        // setOnClickPendingIntent(widgetContainerId, pendingIntent)
       }
     }
 
@@ -182,10 +192,10 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   /// without storing in sharedPrefs.
   private fun createPendingClickIntent(
     activityClass: Class<*>,
-    widgetId : Int,
-    itemId : Int?,
-    stringUid : String?
-  ) : PendingIntent {
+    widgetId: Int,
+    itemId: Int?,
+    stringUid: String?
+  ): PendingIntent {
     val intent = Intent(context, activityClass)
     intent.action = CLICK_WIDGET_ACTION
     intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -194,19 +204,23 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
     var pendingIntentFlag = PendingIntent.FLAG_UPDATE_CURRENT
     if (Build.VERSION.SDK_INT >= 23) {
-      pendingIntentFlag =  PendingIntent.FLAG_IMMUTABLE or pendingIntentFlag
+      pendingIntentFlag = PendingIntent.FLAG_IMMUTABLE or pendingIntentFlag
     }
 
     return PendingIntent.getActivity(context, 0, intent, pendingIntentFlag)
   }
 
   /// force reload the widget and this will onUpdate in broadcast receiver
-  private fun reloadWidgets(@NonNull call: MethodCall,@NonNull result: Result) {
+  private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: Result) {
     val androidAppName = call.argument<String>("androidAppName")
     val widgetProviderName = call.argument<String>("androidProviderName")
 
     if (androidAppName == null) return result.error("-1", "androidAppName is required!", null)
-    if (widgetProviderName == null) return result.error("-1", "widgetProviderName is required!", null)
+    if (widgetProviderName == null) return result.error(
+      "-1",
+      "widgetProviderName is required!",
+      null
+    )
 
     try {
       val javaClass = Class.forName(androidAppName)
@@ -247,20 +261,12 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   // - onConfigureWidget
   // - onWidgetClick
   override fun onNewIntent(intent: Intent): Boolean {
-    Log.i("NOXASCH_PLUGIN", "action ${intent.action}")
     if (intent.action != null) {
-      when(intent.action) {
+      when (intent.action) {
         CONFIGURE_WIDGET_ACTION -> handleConfigureIntent(intent)
         CLICK_WIDGET_ACTION -> handleClickIntent(intent)
       }
     }
-
-//    if (CONFIGURE_WIDGET_ACTION == intent.action.toString()) {
-//      val widgetId = intent.extras!!.getInt("widgetId")
-//      channel.invokeMethod(ON_CONFIGURE_WIDGET_CALLBACK, mapOf("widgetId" to widgetId))
-//
-//      return activity != null
-//    }
 
     return false
   }
@@ -276,22 +282,16 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     val itemId = intent.extras?.getInt(AppWidgetPlugin.EXTRA_APP_ITEM_ID)
     val stringUid = intent.extras?.getInt(AppWidgetPlugin.EXTRA_APP_STRING_UID)
 
-    try {
-      val payload = mapOf(
-        "widgetId" to widgetId,
-        "itemId" to itemId,
-        "stringUid" to stringUid,
-      )
+    val payload = mapOf(
+      "widgetId" to widgetId,
+      "itemId" to itemId,
+      "stringUid" to stringUid,
+    )
 
-      channel.invokeMethod(AppWidgetPlugin.ON_ClICK_WIDGET_CALLBACK, payload)
-    } catch (exception : Exception) {
-//      exception.message?.let { Log.e("NOXASCH_RECEIVER", it, exception) }
-      return false
-    }
+    channel.invokeMethod(AppWidgetPlugin.ON_ClICK_WIDGET_CALLBACK, payload)
     return true
   }
-
-
 }
+
 
 

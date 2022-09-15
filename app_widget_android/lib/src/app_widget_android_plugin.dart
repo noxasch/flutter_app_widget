@@ -15,8 +15,6 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     void Function(Map<String, dynamic> payload)? onClickWidget,
   })  : _onConfigureWidget = onConfigureWidget,
         _onClickWidget = onClickWidget {
-    print('initialize AppWidgetAndroidPlugin');
-
     _methodChannel.setMethodCallHandler(handleMethod);
   }
 
