@@ -1,3 +1,5 @@
+// ignore_for_file: inference_failure_on_collection_literal
+
 import 'package:app_widget/app_widget.dart';
 import 'package:app_widget_platform_interface/app_widget_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -21,6 +23,8 @@ void main() {
           return true;
         case 'cancelConfigureWidget':
           return true;
+        case 'getWidgetIds':
+          return [42];
         case 'reloadWidgets':
           return true;
         case 'updateWidget':
@@ -113,6 +117,26 @@ void main() {
         isMethodCall(
           'cancelConfigureWidget',
           arguments: null,
+        )
+      ]);
+    });
+
+    test('getWidgetIds', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.getWidgetIds(
+          androidProviderName: 'TestProvider',
+        ),
+        completion([42]),
+      );
+
+      expect(log, <Matcher>[
+        isMethodCall(
+          'getWidgetIds',
+          arguments: <String, Object>{
+            'androidProviderName': 'TestProvider',
+          },
         )
       ]);
     });

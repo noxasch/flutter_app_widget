@@ -1,3 +1,7 @@
+## 0.0.3
+
+* implement getWidgetIds api interface
+
 ## 0.0.2
 
 * implement updateWidget api interface

@@ -46,6 +46,11 @@ class MockAppWidgetPugin implements AppWidgetPlugin {
   }) async {
     return true;
   }
+
+  @override
+  Future<List<int>?> getWidgetIds({required String androidProviderName}) async {
+    return [];
+  }
 }
 
 void main() {
@@ -65,6 +70,8 @@ void main() {
           return true;
         case 'cancelConfigureWidget':
           return true;
+        case 'getWidgetIds':
+          return [];
         case 'reloadWidgets':
           return true;
         case 'widgetExist':
@@ -83,6 +90,21 @@ void main() {
 
     tearDownAll(() {
       log.clear();
+    });
+
+    test('cancelConfigureWidget', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.cancelConfigureWidget(),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
+      );
     });
 
     test('configureWidget', () async {
@@ -106,32 +128,13 @@ void main() {
       );
     });
 
-    test('updateWidget', () async {
+    test('getWidgetIds', () async {
       final appWidgetPlugin = AppWidgetPlugin();
 
       expect(
-        appWidgetPlugin.updateWidget(
-          androidAppName: '',
-          widgetId: 1,
-          itemId: 1,
-          widgetLayout: '',
-          textViewIdValueMap: {},
+        () => appWidgetPlugin.getWidgetIds(
+          androidProviderName: 'TestProvider',
         ),
-        throwsA(
-          isA<Error>().having(
-            (e) => e.toString().contains('LateInitializationError'),
-            'LateInitializationError',
-            isTrue,
-          ),
-        ),
-      );
-    });
-
-    test('cancelConfigureWidget', () async {
-      final appWidgetPlugin = AppWidgetPlugin();
-
-      expect(
-        appWidgetPlugin.cancelConfigureWidget(),
         throwsA(
           isA<Error>().having(
             (e) => e.toString().contains('LateInitializationError'),
@@ -149,6 +152,27 @@ void main() {
         appWidgetPlugin.reloadWidgets(
           androidAppName: 'com.example.app',
           androidProviderName: 'TestProvider',
+        ),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
+      );
+    });
+
+    test('updateWidget', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.updateWidget(
+          androidAppName: '',
+          widgetId: 1,
+          itemId: 1,
+          widgetLayout: '',
+          textViewIdValueMap: {},
         ),
         throwsA(
           isA<Error>().having(

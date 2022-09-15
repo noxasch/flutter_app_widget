@@ -107,6 +107,17 @@ class AppWidgetPlugin {
     );
   }
 
+  ///
+  /// Get all widgetId associated with a AppWidgetProvider
+  ///
+  /// [androidProviderName] is the provider class name which also it's filename <br>
+  /// eg: `AppWidgetExampleProvider`
+  ///
+  Future<List<int>?> getWidgetIds({required String androidProviderName}) {
+    return AppWidgetPlatform.instance
+        .getWidgetIds(androidProviderName: androidProviderName);
+  }
+
   /// Force reload all widgets
   ///
   /// This will trigger onUpdate method on android side.

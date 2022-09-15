@@ -1,3 +1,5 @@
+// ignore_for_file: inference_failure_on_collection_literal
+
 import 'package:app_widget_android/app_widget_android.dart';
 import 'package:app_widget_platform_interface/app_widget_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,6 +26,17 @@ void main() {
     AppWidgetPlatform.instance = fakePlatform;
 
     expect(await appWidgetAndroidPlugin.configureWidget(), isTrue);
+  });
+
+  test('getWidgetIds', () async {
+    AppWidgetPlatform appWidgetAndroidPlugin = MockAppWidgetAndroidPlatform();
+    MockAppWidgetAndroidPlatform fakePlatform = MockAppWidgetAndroidPlatform();
+    AppWidgetPlatform.instance = fakePlatform;
+
+    expect(
+      await appWidgetAndroidPlugin.getWidgetIds(androidProviderName: 'name'),
+      [42],
+    );
   });
 
   test('reloadWidgets', () async {
@@ -95,5 +108,10 @@ class MockAppWidgetAndroidPlatform
   @override
   Future<bool?> widgetExist(int widgetId) async {
     return true;
+  }
+
+  @override
+  Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
+    return [42];
   }
 }

@@ -39,20 +39,8 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   }
 
   @override
-  Future<bool?> reloadWidgets({
-    String? androidAppName,
-    String? androidProviderName,
-  }) {
-    return _methodChannel.invokeMethod<bool>('reloadWidgets', {
-      'androidAppName': androidAppName,
-      'androidProviderName': androidProviderName
-    });
-  }
-
-  @override
-  Future<bool?> widgetExist(int widgetId) {
-    return _methodChannel
-        .invokeMethod<bool>('widgetExist', {'widgetId': widgetId});
+  Future<bool?> cancelConfigureWidget() {
+    return _methodChannel.invokeMethod<bool>('cancelConfigureWidget');
   }
 
   @override
@@ -75,6 +63,27 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   }
 
   @override
+  Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
+    final widgetIds =
+        await _methodChannel.invokeMethod<List<dynamic>?>('getWidgetIds', {
+      'androidProviderName': androidProviderName,
+    });
+
+    return widgetIds?.map<int>((id) => id as int).toList();
+  }
+
+  @override
+  Future<bool?> reloadWidgets({
+    String? androidAppName,
+    String? androidProviderName,
+  }) {
+    return _methodChannel.invokeMethod<bool>('reloadWidgets', {
+      'androidAppName': androidAppName,
+      'androidProviderName': androidProviderName
+    });
+  }
+
+  @override
   Future<bool?> updateWidget({
     String? androidAppName,
     int? widgetId,
@@ -93,7 +102,9 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     });
   }
 
-  Future<bool?> cancelConfigureWidget() {
-    return _methodChannel.invokeMethod<bool>('cancelConfigureWidget');
+  @override
+  Future<bool?> widgetExist(int widgetId) {
+    return _methodChannel
+        .invokeMethod<bool>('widgetExist', {'widgetId': widgetId});
   }
 }

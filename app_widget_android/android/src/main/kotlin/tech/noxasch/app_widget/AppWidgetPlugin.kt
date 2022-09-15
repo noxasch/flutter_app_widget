@@ -65,10 +65,11 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when (call.method) {
-      "reloadWidgets" -> reloadWidgets(call, result)
-      "configureWidget" -> configureWidget(call, result)
-      "updateWidget" -> updateWidget(call, result)
       "cancelConfigureWidget" -> cancelConfigureWidget(result)
+      "configureWidget" -> configureWidget(call, result)
+      "getWidgetIds" -> getWidgetIds(call, result)
+      "reloadWidgets" -> reloadWidgets(call, result)
+      "updateWidget" -> updateWidget(call, result)
       "widgetExist" -> widgetExist(call, result)
       else -> {
         result.notImplemented()
@@ -78,6 +79,20 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
+  }
+
+  private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: Result) {
+    try {
+      val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
+      val widgetProvider = ComponentName(context, widgetProviderName)
+      val widgetManager = AppWidgetManager.getInstance(context)
+
+      val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
+
+      return result.success(widgetIds)
+    } catch (exception: Exception) {
+      result.error("-2", exception.message, exception)
+    }
   }
 
   private fun cancelConfigureWidget(@NonNull result: Result) {

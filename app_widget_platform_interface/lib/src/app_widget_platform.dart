@@ -29,7 +29,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
-  // the params are not require as different platform will require differet parameters
+  // the params are not require in base interface as different platform will require differet parameters
   // we handle this in platform specific and plugin interface
   Future<bool?> configureWidget({
     String? androidAppName,
@@ -57,6 +57,10 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     int? itemId,
     String? stringUid,
   }) async {
+    throw UnimplementedError();
+  }
+
+  Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
     throw UnimplementedError();
   }
 
