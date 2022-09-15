@@ -22,6 +22,21 @@ void main() {
         completion(true));
   });
 
+  testWidgets('udpateWidget', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+
+    expect(
+        appWidgetPlugin.updateWidget(
+          androidAppName: 'tech.noxasch.app_widget_example',
+          widgetId: 1,
+          widgetLayout: 'example_layout',
+          itemId: 1,
+          stringUid: 'uid',
+          textViewIdValueMap: {'widget_title': 'my title'},
+        ),
+        completion(true));
+  });
+
   testWidgets('Can check if widget exist', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
     final res = await appWidgetPlugin.widgetExist(12);
