@@ -11,16 +11,16 @@ packages:
   app_widget_android:
     dependency: transitive
     description:
-      path: "../../app_widget_android"
-      relative: true
-    source: path
+      name: app_widget_android
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.1"
   app_widget_platform_interface:
     dependency: transitive
     description:
-      path: "../../app_widget_platform_interface"
-      relative: true
-    source: path
+      name: app_widget_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.0.1"
   archive:
     dependency: transitive
