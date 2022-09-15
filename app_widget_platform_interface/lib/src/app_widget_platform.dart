@@ -25,7 +25,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
 
   static const channel = 'tech.noxasch.flutter/app_widget';
 
-  Future<String?> getPlatformVersion() async {
+  Future<bool?> cancelConfigureWidget() {
     throw UnimplementedError();
   }
 
@@ -42,10 +42,6 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
-  Future<bool?> widgetExist(int widgetId) async {
-    throw UnimplementedError();
-  }
-
   Future<bool?> reloadWidgets({
     String? androidAppName,
     String? androidProviderName,
@@ -53,7 +49,18 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
-  Future<bool?> cancelConfigureWidget() {
+  Future<bool?> updateWidget({
+    String? androidAppName,
+    int? widgetId,
+    String? widgetLayout,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+    String? stringUid,
+  }) async {
+    throw UnimplementedError();
+  }
+
+  Future<bool?> widgetExist(int widgetId) async {
     throw UnimplementedError();
   }
 }
