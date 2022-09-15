@@ -4,70 +4,48 @@ import 'package:flutter/foundation.dart';
 
 class AppWidgetPlugin {
   /// callback function when the widget is first created
-  final void Function(int widgetId)? onConfigureWidget;
-
-  /// callback on app interval update
-  final void Function(List<int> widgetIds)? onUpdateWidgets;
-
-  /// callback when app is deleted
-  ///
-  /// can be used for cleanup if you store widget related somewhere
-  final void Function(List<int> widgetIds)? onDeletedWidgets;
+  late final void Function(int widgetId)? _onConfigureWidget;
 
   /// payload keys:
   /// - itemId
   /// - stringUid
   /// - widgetId
-  final void Function(Map<String, dynamic> payload)? onClickWidget;
+  late final void Function(Map<String, dynamic> payload)? _onClickWidget;
 
   factory AppWidgetPlugin({
     void Function(int widgetId)? onConfigureWidget,
-    void Function(List<int> widgetIds)? onUpdateWidgets,
-    void Function(List<int> widgetIds)? onDeletedWidgets,
     void Function(Map<String, dynamic> payload)? onClickWidget,
   }) {
-    if (_instance != null) return _instance!;
-    _instance = AppWidgetPlugin._(
+    if (instance != null) return instance!;
+    instance = AppWidgetPlugin._(
       onConfigureWidget: onConfigureWidget,
-      onUpdateWidgets: onUpdateWidgets,
-      onDeletedWidgets: onDeletedWidgets,
       onClickWidget: onClickWidget,
     );
 
-    return _instance!;
+    return instance!;
   }
 
   AppWidgetPlugin._({
-    this.onConfigureWidget,
-    this.onUpdateWidgets,
-    this.onDeletedWidgets,
-    this.onClickWidget,
+    required void Function(int widgetId)? onConfigureWidget,
+    required void Function(Map<String, dynamic> payload)? onClickWidget,
   }) {
+    _onConfigureWidget = onConfigureWidget;
+    _onClickWidget = onClickWidget;
+
     if (kIsWeb) {
       return;
     }
     if (defaultTargetPlatform == TargetPlatform.android) {
       AppWidgetPlatform.instance = AppWidgetAndroidPlugin(
-        onConfigureWidget: onConfigureWidget,
-        onUpdateWidgets: onUpdateWidgets,
-        onDeletedWidgets: onDeletedWidgets,
-        onClickWidget: onClickWidget,
+        onConfigureWidget: _onConfigureWidget,
+        onClickWidget: _onClickWidget,
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return;
-    } else if (defaultTargetPlatform == TargetPlatform.macOS) {
-      return;
-    } else if (defaultTargetPlatform == TargetPlatform.linux) {
       return;
     }
   }
 
-  static AppWidgetPlugin? _instance;
-
-  // remove this, this is just to make sure the plugin is working
-  Future<String?> getPlatformVersion() {
-    return AppWidgetPlatform.instance.getPlatformVersion();
-  }
+  static AppWidgetPlugin? instance;
 
   /// Configure Widget for the first time
   ///
@@ -76,18 +54,24 @@ class AppWidgetPlugin {
     required String androidAppName,
     required int widgetId,
     required String widgetLayout,
-    required String widgetContainerName,
     Map<String, String>? textViewIdValueMap,
     int? itemId,
+    String? stringUid,
   }) async {
     return AppWidgetPlatform.instance.configureWidget(
       androidAppName: androidAppName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
-      widgetContainerName: widgetContainerName,
       textViewIdValueMap: textViewIdValueMap,
       itemId: itemId,
+      stringUid: stringUid,
     );
+  }
+
+  /// check if widget with given Id exist
+  ///
+  Future<bool?> widgetExist(int widgetId) async {
+    return AppWidgetPlatform.instance.widgetExist(widgetId);
   }
 
   /// Cancel widget configuration

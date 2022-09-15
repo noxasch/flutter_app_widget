@@ -4,6 +4,43 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+class MockAppWidgetPugin implements AppWidgetPlugin {
+  @override
+  Future<String?> getPlatformVersion() async {
+    return '42';
+  }
+
+  @override
+  Future<bool> cancelConfigureWidget() async {
+    return true;
+  }
+
+  @override
+  Future<bool> configureWidget({
+    required String androidAppName,
+    required int widgetId,
+    required String widgetLayout,
+    Map<String, String>? textViewIdValueMap,
+    int? itemId,
+    String? stringUid,
+  }) async {
+    return true;
+  }
+
+  @override
+  Future<bool> reloadWidgets({
+    required String androidAppName,
+    required String androidProviderName,
+  }) async {
+    return true;
+  }
+
+  @override
+  Future<bool> widgetExist(int widgetId) async {
+    return true;
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -30,12 +67,14 @@ void main() {
     });
   });
 
-  group('Android', () {
+  group('iOS', () {
     setUp(() {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      // AppWidgetPlatform.instance
     });
 
-    tearDown(() {
+    tearDownAll(() {
       log.clear();
     });
 
@@ -44,29 +83,20 @@ void main() {
 
       expect(
         appWidgetPlugin.configureWidget(
-          androidAppName: 'appname',
+          androidAppName: '',
           widgetId: 1,
           itemId: 1,
-          widgetLayout: 'layoutname',
+          widgetLayout: '',
           textViewIdValueMap: {},
-          stringUid: 'uid',
         ),
-        completion(true),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
       );
-
-      expect(log, <Matcher>[
-        isMethodCall(
-          'configureWidget',
-          arguments: <String, Object>{
-            'androidAppName': 'appname',
-            'widgetId': 1,
-            'itemId': 1,
-            'widgetLayout': 'layoutname',
-            'textViewIdValueMap': {},
-            'stringUid': 'uid'
-          },
-        )
-      ]);
     });
 
     test('cancelConfigureWidget', () async {
@@ -74,15 +104,14 @@ void main() {
 
       expect(
         appWidgetPlugin.cancelConfigureWidget(),
-        completion(true),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
       );
-
-      expect(log, <Matcher>[
-        isMethodCall(
-          'cancelConfigureWidget',
-          arguments: null,
-        )
-      ]);
     });
 
     test('reloadWidgets', () async {
@@ -93,18 +122,14 @@ void main() {
           androidAppName: 'com.example.app',
           androidProviderName: 'TestProvider',
         ),
-        completion(true),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
       );
-
-      expect(log, <Matcher>[
-        isMethodCall(
-          'reloadWidgets',
-          arguments: <String, Object>{
-            'androidAppName': 'com.example.app',
-            'androidProviderName': 'TestProvider',
-          },
-        )
-      ]);
     });
 
     test('widgetExist', () async {
@@ -112,17 +137,14 @@ void main() {
 
       expect(
         appWidgetPlugin.widgetExist(12),
-        completion(true),
+        throwsA(
+          isA<Error>().having(
+            (e) => e.toString().contains('LateInitializationError'),
+            'LateInitializationError',
+            isTrue,
+          ),
+        ),
       );
-
-      expect(log, <Matcher>[
-        isMethodCall(
-          'widgetExist',
-          arguments: <String, Object>{
-            'widgetId': 12,
-          },
-        )
-      ]);
     });
   });
 }

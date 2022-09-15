@@ -32,8 +32,15 @@ class MockAppWidgetAndroidPlatform
     String? widgetContainerName,
     Map<String, String>? textViewIdValueMap,
     int? itemId,
+    String? stringUid,
   }) {
     // TODO: implement configureWidget
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> widgetExist(int widgetId) {
+    // TODO: implement widgetExist
     throw UnimplementedError();
   }
 }
