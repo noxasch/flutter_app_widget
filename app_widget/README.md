@@ -1,13 +1,10 @@
-# app_widget
-
-flutter app widget
-
-## Getting Started
+# App Widget
 
 Since flutter engine are build on android activity, we cannot directly build
 the the widget interface using flutter. Hence it need to be build using the native
-way. This plugin attempt to exposed as much useful API to flutter to reduce
+way. This plugin attempt to exposed as much useful API and callback to flutter to reduce
 going back and forth to native.
+
 ## Plaform Support
 
 | Android | iOS |

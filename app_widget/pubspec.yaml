@@ -1,5 +1,5 @@
 name: app_widget
-description: flutter app widget
+description: Flutter plugin that provide useful app widget api and callback into flutter
 version: 0.0.4
 homepage: https://noxasch.tech/
 repository: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget

@@ -1,7 +1,8 @@
 # app_widget_android
 
-This package are meant to use by app_widget. If you are using this on it's own, you
-are on your own.
+Android implementation for [app_widget](https://pub.dev/packages/app_widget) plugin. This package are not meant to be used
+on it's own.
+
 ## Getting Started
 
 This project is a starting point for a Flutter

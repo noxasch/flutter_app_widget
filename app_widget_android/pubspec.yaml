@@ -1,5 +1,5 @@
 name: app_widget_android
-description: flutter app widget
+description: Android implementation for app_widget plugin
 version: 0.0.4
 homepage: https://noxasch.tech/
 repository: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget_android
