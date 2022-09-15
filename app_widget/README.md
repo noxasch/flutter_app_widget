@@ -106,22 +106,9 @@ class MainActivity: FlutterActivity() {
 
     // add this line
     if (intent.action == AppWidgetManager.ACTION_APPWIDGET_CONFIGURE) {
-      handleConfigureAction()
+      AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
     }
 
-  }
-
-  // add this method
-  // implement this as static method in App so we can use like this:
-  // AppWidgetPlugin.handleConfigureAction(context, intent, widgetId)
-  private fun handleConfigureAction() {
-    val extras = intent.extras
-    val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
-    if (widgetId == 0) return
-
-    val configIntent = intent.setAction(AppWidgetPlugin.CONFIGURE_WIDGET_ACTION)
-    configIntent.putExtra("widgetId", widgetId)
-    startActivity(configIntent)
   }
 }
 ```

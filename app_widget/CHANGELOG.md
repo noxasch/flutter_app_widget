@@ -1,3 +1,7 @@
+## 0.0.4
+
+* implement `handleConfigureAction` android method
+
 ## 0.0.3
 
 * implement getWidgetIds api - Android

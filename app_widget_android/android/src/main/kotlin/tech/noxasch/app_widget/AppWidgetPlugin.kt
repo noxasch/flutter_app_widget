@@ -55,6 +55,17 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     val ON_CONFIGURE_WIDGET_CALLBACK = "onConfigureWidget"
     @JvmStatic
     val ON_ClICK_WIDGET_CALLBACK = "onClickWidget"
+
+    @JvmStatic
+    fun handleConfigureAction(context : Context, intent: Intent) {
+       val extras = intent.extras
+       val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
+       if (widgetId == 0) return
+
+       val configIntent = intent.setAction(AppWidgetPlugin.CONFIGURE_WIDGET_ACTION)
+       configIntent.putExtra("widgetId", widgetId)
+       context.startActivity(configIntent)
+     }
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
