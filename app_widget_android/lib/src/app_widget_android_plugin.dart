@@ -11,18 +11,17 @@ const MethodChannel _methodChannel = MethodChannel(AppWidgetPlatform.channel);
 
 class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   AppWidgetAndroidPlugin({
-    required void Function(int widgetId)? onConfigureWidget,
-    required void Function(Map<String, dynamic> payload)? onClickWidget,
-  }) {
+    void Function(int widgetId)? onConfigureWidget,
+    void Function(Map<String, dynamic> payload)? onClickWidget,
+  })  : _onConfigureWidget = onConfigureWidget,
+        _onClickWidget = onClickWidget {
     print('initialize AppWidgetAndroidPlugin');
-    _onConfigureWidget = onConfigureWidget;
-    _onClickWidget = onClickWidget;
 
     _methodChannel.setMethodCallHandler(handleMethod);
   }
 
-  late final void Function(int widgetId)? _onConfigureWidget;
-  late final void Function(Map<String, dynamic> payload)? _onClickWidget;
+  final void Function(int widgetId)? _onConfigureWidget;
+  final void Function(Map<String, dynamic> payload)? _onClickWidget;
 
   Future<dynamic> handleMethod(MethodCall call) async {
     print('NOXASCH_PLUGIN_DART: methodCall ${call.method}');

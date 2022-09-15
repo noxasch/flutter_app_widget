@@ -3,15 +3,6 @@ import 'package:app_widget_platform_interface/app_widget_platform_interface.dart
 import 'package:flutter/foundation.dart';
 
 class AppWidgetPlugin {
-  /// callback function when the widget is first created
-  late final void Function(int widgetId)? _onConfigureWidget;
-
-  /// payload keys:
-  /// - itemId
-  /// - stringUid
-  /// - widgetId
-  late final void Function(Map<String, dynamic> payload)? _onClickWidget;
-
   factory AppWidgetPlugin({
     void Function(int widgetId)? onConfigureWidget,
     void Function(Map<String, dynamic> payload)? onClickWidget,
@@ -28,10 +19,8 @@ class AppWidgetPlugin {
   AppWidgetPlugin._({
     required void Function(int widgetId)? onConfigureWidget,
     required void Function(Map<String, dynamic> payload)? onClickWidget,
-  }) {
-    _onConfigureWidget = onConfigureWidget;
-    _onClickWidget = onClickWidget;
-
+  })  : _onConfigureWidget = onConfigureWidget,
+        _onClickWidget = onClickWidget {
     if (kIsWeb) {
       return;
     }
@@ -46,6 +35,15 @@ class AppWidgetPlugin {
   }
 
   static AppWidgetPlugin? instance;
+
+  /// callback function when the widget is first created
+  final void Function(int widgetId)? _onConfigureWidget;
+
+  /// payload keys:
+  /// - itemId
+  /// - stringUid
+  /// - widgetId
+  final void Function(Map<String, dynamic> payload)? _onClickWidget;
 
   /// Configure Widget for the first time
   ///
