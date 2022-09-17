@@ -17,6 +17,12 @@ going back and forth to native and make buidling app widget / home screen widget
 
 > Note: It is advisable to do this setup using Android Studio since it help you design the widget layout and proper linting and import in kotlin file.
 
+There are multiple ways you can update the widget on Android:
+1. Using AppWidgetProvider / BroadcastReceiver
+2. Using workmanager
+3. Using alarm manager
+4. Using android service
+
 
 1. Add widget layout in `android/app/src/main/res/layout/example_layout.xml`
 
@@ -109,8 +115,9 @@ Inherit from Android `AppWidgetProvider` and implement the required method if ne
     Probably you want to implement `onDeleted` or `onDisabled` method to handle cleanup like removing the widget Id from sharedPrefences allow user to add multiple widget.
 
 ```kotlin
-class MyWidgetExampleProvider : AppWidgetProvider() {
-}
+package com.example.my_app
+
+class MyWidgetExampleProvider : AppWidgetProvider()
 ```
 
 5. Update MainActivity to handle `onConfigure` intent
@@ -138,13 +145,6 @@ class MainActivity: FlutterActivity() {
 6. By now you should be able to add a widget. Next step is to configure it from flutter side
 and make sure the widget configured.
 
-7. Implement onEnabled (update widget on reboot) - this has to be done from android ?
-
-6. Implement android WidgetProvider - Already done
-
-7. Handling update in native (Optional) - TODO
-
-7. Implement workmanager in flutter - TODO
 
 ### In App Usage and Dart/Flutter Api
 
@@ -153,8 +153,7 @@ This section shows how to use the exposed api by the plugin in your app.
 ```dart
 // instantiate appWidgetPlugin
 final appWidgetPlugin = AppWidgetPlugin();
-appWidgetPlugin.configureWidget(...)
-appWidgetPlugin.cancelConfigure()
+await appWidgetPlugin.configureWidget(...)
 ```
 
 #### handling onConfigureWidget
@@ -176,7 +175,7 @@ final appWidgetPlugin = AppWidgetPlugin(
 // this changes will reflect on the widget
 // only use this method in widget configuration screen as
 // it method will close the app which require to signal the widget config completion
-appWidgetPlugin.configureWidget(
+await appWidgetPlugin.configureWidget(
    // change to androidPackageName - we needed as param since there is no standard on how long the domain name can be
   androidPackageName: 'tech.noxasch.app_widget_example',
   widgetId: _widgetId!,
@@ -185,6 +184,12 @@ appWidgetPlugin.configureWidget(
     'widget_title': 'MY WIDGET',
     'widget_message': 'This is my widget message'
 });
+```
+#### Cancelling
+Call this method to properly cancel widget first time configuration
+
+```dart
+await appWidgetPlugin.cancelConfigure()
 ```
 
 #### handling onClickWidget
@@ -205,12 +210,7 @@ final appWidgetPlugin = AppWidgetPlugin(
 );
 ```
 
-#### Updating widget
-There are two ways we can update the widget on Android:
-
-1. Using sharedPreferences and AppWidgetProvider
-2. Using workmanager scheduled task
-
+#### updateWidget
 You can get the `widgetId` if you store the id during `onConfigureWidget` or call `appWidgetPlugin.getWidgetIds()`
 to get all widgets Id.
 
@@ -218,7 +218,7 @@ Most of the time you'll want to update widget via workmanager. See below
 how to use the extension in workmanager.
 
 ```dart
-appWidgetPlugin.updateWidget(
+await appWidgetPlugin.updateWidget(
   androidPackageName: 'tech.noxasch.app_widget_example',
   widgetId: _widgetId!,
   widgetLayout: 'example_layout',
@@ -228,15 +228,59 @@ appWidgetPlugin.updateWidget(
 });
 ```
 
-#### Using Workmanager
-TODO
+#### reloadWidgets
+
+- use this method if you handle update in your widget provider want want to trigger force
+reload widgets from flutter
+- this will trigger `onUpdate` intent in your widget provider
+
+```dart
+await appWidgetPlugin.reloadWidgets(
+  androidProviderName: 'AppWidgetExampleProvider',
+});
+```
+
+#### widgetExist
+
+```dart
+final widgetId = 12;
+if (await appWidgetPlugin.widgetExist(widgetId)) {
+  // do something if widget exist
+}
+```
+
+### getWidgetIds
+- return widgetIds
+- this is unreliable - store your widget id manualy
+- see this [issue](https://stackoverflow.com/questions/12462696/appwidgetmanager-getappwidgetids-returning-old-widget-ids)
+
+```dart
+await appWidgetPlugin.getWidgetIds(
+  androidProviderName: 'AppWidgetExampleProvider'
+);
+```
+<!--
+7. Implement onEnabled (update widget on reboot) - this has to be done from android ?
+
+6. Implement android WidgetProvider - Already done
+
+7. Handling update in native (Optional) - TODO
+
+7. Implement workmanager in flutter - TODO
 
 #### Dark Mode
 - move this to blog post add link and also link to android official docs
 
+
+-->
+
+#### References
+- [Android developers - App Widgets](https://developer.android.com/develop/ui/views/appwidgets)
+- [Android developers - Updating widget and creating widget preview](https://developer.android.com/develop/ui/views/appwidgets/advanced)
+
 ## Checklist
 - [x] Unit Test
-- [ ] update documentation
+- [x] update documentation to cover api usage
 - [ ] Update example app
 - [ ] Update Screenshot
 - [ ] iOS support
