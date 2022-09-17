@@ -11,28 +11,4 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import tech.noxasch.app_widget.AppWidgetPlugin
 
-class AppWidgetExampleProvider : AppWidgetProvider() {
-    override fun onUpdate(
-        context: Context?,
-        appWidgetManager: AppWidgetManager?,
-        appWidgetIds: IntArray?
-    ) {
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
-        Log.i("NOXASCH_PLUGIN", "CONTEXT ${context != null}")
-        Log.i("NOXASCH_PLUGIN", "ON UPDATE")
-
-        if (context != null && appWidgetIds != null) {
-            Log.i("NOXASCH_RECEIVER", "HAVE")
-            val flutterEngine = FlutterEngine(context)
-
-//            val channel = MethodChannel(, AppWidgetPlugin.CHANNEL)
-//            channel.invokeMethod(AppWidgetPlugin.ON_UPDATE_WIDGETS_CALLBACK, appWidgetIds)
-//            Log.i("NOXASCH_RECEIVER",channel.toString())
-//            val updateIntent = Intent()
-//            context.
-//            updateIntent.action = (AppWidgetPlugin.UPDATE_WIDGETS_ACTION)
-//            context.applicationContext.startActivity(updateIntent)
-        }
-    }
-
-}
+class AppWidgetExampleProvider : AppWidgetProvider()
