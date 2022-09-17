@@ -180,6 +180,7 @@ await appWidgetPlugin.configureWidget(...)
 
 ```dart
 // this method can be declare as a top level function or inside a widget
+@pragma('vm:entry-point')
 void onConfigureWidget(int widgetId) async {
   // handle widget configuration
   // eg:
@@ -222,6 +223,7 @@ await appWidgetPlugin.cancelConfigure()
 
 ```dart
 // this method can be declare as a top level function or inside a widget
+@pragma('vm:entry-point')
 void onClickWidget(int widgetId) {
   // handle click widget event
   // eg:
@@ -293,6 +295,7 @@ another task that longer maybe than your update widget task, and then cancel it
 inside the callback.
 
 ```dart
+@pragma('vm:entry-point')
 void onConfigureWidget(int widgetId) async {
   final sharedPrefs = await SharedPreferences.getInstance();
    await sharedPrefs.setInt('widget_id', widgetId);
