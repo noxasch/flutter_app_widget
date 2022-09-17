@@ -69,7 +69,6 @@ class _MyAppState extends State<MyApp> {
           // await _appWidgetPlugin.cancelConfigureWidget();
           if (_widgetId != null) {
             await _appWidgetPlugin.configureWidget(
-                androidAppName: 'tech.noxasch.app_widget_example',
                 widgetId: _widgetId!,
                 widgetLayout: 'example_layout',
                 textViewIdValueMap: {
@@ -78,8 +77,6 @@ class _MyAppState extends State<MyApp> {
                 });
           } else {
             await _appWidgetPlugin.reloadWidgets(
-                androidAppName:
-                    'tech.noxasch.app_widget_example.AppWidgetExampleProvider',
                 androidProviderName:
                     'tech.noxasch.app_widget.AppWidgetBroadcastReceiver');
           }
