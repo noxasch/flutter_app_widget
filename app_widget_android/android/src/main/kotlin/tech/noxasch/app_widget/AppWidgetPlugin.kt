@@ -3,13 +3,11 @@ package tech.noxasch.app_widget
 import android.app.Activity
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
 import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.Keep
 import androidx.annotation.NonNull
@@ -21,7 +19,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
-import kotlin.Exception
 
 
 @Keep
@@ -140,7 +137,27 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       val widgetLayout = call.argument<String>("widgetLayout")
         ?: return result.error("-1", "widgetLayout is required!", null)
 
-      setWidget(androidAppName, widgetId, widgetLayout, call)
+      val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
+      val itemId = call.argument<Int>("itemId")
+      val stringUid = call.argument<String>("stringUid")
+      val activityClass = Class.forName("$androidAppName.MainActivity")
+      val appWidgetManager = AppWidgetManager.getInstance(context)
+      val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
+      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
+
+      if (textViewIdValueMap != null) {
+        val views : RemoteViews = RemoteViews(context.packageName, widgetLayoutId).apply {
+          for ((key, value) in textViewIdValueMap) {
+            val textViewId: Int =
+              context.resources.getIdentifier(key, "id", context.packageName)
+            if (textViewId == 0) throw Exception("Id $key does not exist!")
+            setTextViewText(textViewId, value)
+            setOnClickPendingIntent(textViewId, pendingIntent)
+          }
+        }
+
+        appWidgetManager.updateAppWidget(widgetId, views)
+      }
 
       // This is important to confirm the widget
       // otherwise it's considered cancelled and widget will be removed
@@ -163,68 +180,37 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       val widgetLayout = call.argument<String>("widgetLayout")
         ?: return result.error("-1", "widgetLayout is required!", null)
 
-      setWidget(androidAppName, widgetId, widgetLayout, call)
+      val widgetLayoutId: Int =
+        context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
+      val itemId = call.argument<Int>("itemId")
+      val stringUid = call.argument<String>("stringUid")
+      val activityClass = Class.forName("$androidAppName.MainActivity")
+      val appWidgetManager = AppWidgetManager.getInstance(context)
+      val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
+      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
+
+      if (textViewIdValueMap != null) {
+        val views: RemoteViews = RemoteViews(context.packageName, widgetLayoutId)
+
+        for ((key, value) in textViewIdValueMap) {
+          val textViewId: Int =
+            context.resources.getIdentifier(key, "id", context.packageName)
+          if (textViewId == 0) throw Exception("Id $key does not exist!")
+
+          // only work if widget is blank - so we have to clear it first
+          views.setTextViewText(textViewId, "")
+          appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+          views.setTextViewText(textViewId, value)
+          appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+          views.setOnClickPendingIntent(textViewId, pendingIntent)
+          appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
+        }
+      }
 
       return result.success(true)
     } catch (exception: Exception) {
       return result.error("-2", exception.message, exception)
     }
-  }
-
-  private fun setWidget(
-    androidAppName: String,
-    widgetId: Int,
-    widgetLayout: String,
-    call: MethodCall,
-  ) {
-    try {
-      // allow widget to have any number of textview
-      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
-      // expose itemId if want to track widget by unique integer
-      val itemId = call.argument<Int>("itemId")
-      val stringUid = call.argument<String>("stringUid")
-
-      val activityClass = Class.forName("$androidAppName.MainActivity")
-      val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", androidAppName)
-      val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
-      val views = RemoteViews(androidAppName, widgetLayoutId)
-      val appWidgetManager = AppWidgetManager.getInstance(context)
-
-      setWidgetView(
-        androidAppName,
-        views,
-        widgetId,
-        pendingIntent,
-        appWidgetManager,
-        textViewIdValueMap,
-      )
-    } catch (exception: Exception) {
-      throw exception
-    }
-  }
-
-  private fun setWidgetView(
-    androidAppName: String,
-    views: RemoteViews,
-    widgetId: Int,
-    pendingIntent: PendingIntent,
-    appWidgetManager: AppWidgetManager,
-    textViewIdValueMap: Map<String, String>?,
-    handleOnTap: Boolean = true
-  ) {
-    if (textViewIdValueMap != null) {
-      views.apply {
-        for ((key, value) in textViewIdValueMap) {
-          val textViewId: Int =
-            context.resources.getIdentifier(key, "id", androidAppName)
-          if (textViewId == 0) throw Exception("Id $key does not exist!")
-          setTextViewText(textViewId, value)
-          if (handleOnTap) setOnClickPendingIntent(textViewId, pendingIntent)
-        }
-      }
-    }
-
-    appWidgetManager.updateAppWidget(widgetId, views)
   }
 
   /// Create click intent on a widget
