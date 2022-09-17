@@ -16,6 +16,15 @@ This plugin doesn't dictate on how to handle widget update/storage/caching.
 It simply for provide necessary api in case dev want to handle most of those
 thing on flutter/dart.
 
+### Table Of Content
+
+Platform Setup
+- [Android]()
+    - [Android Setup](#android-setup)
+    - [Plugin Api Usage](#in-app-usage-and-dartflutter-api)
+    - [Update using flutter workmanager](#handling-widget-update-using-appwidgetprovider-in-kotlin)
+    - [Update widget using widget provider in kotlin](#handling-widget-update-using-appwidgetprovider-in-kotlin)
+
 ### Platform setup
 
 #### Android
