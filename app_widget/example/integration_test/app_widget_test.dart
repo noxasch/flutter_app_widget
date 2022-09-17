@@ -56,12 +56,10 @@ void main() {
   testWidgets('reloadWidgets throw expected error', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
-    expect(
-        () => appWidgetPlugin.reloadWidgets(
-            androidPackageName: 'tech.noxasch.app_widget_example',
-            androidProviderName: 'AppWidgetExampleProvider'),
-        throwsA(isA<PlatformException>()
-            .having((e) => e.code == '-2', '', isTrue)));
+    final res = await appWidgetPlugin.reloadWidgets(
+        androidProviderName: 'AppWidgetExampleProvider');
+
+    expect(res, isTrue);
   });
 
   testWidgets('widgetExist', (tester) async {

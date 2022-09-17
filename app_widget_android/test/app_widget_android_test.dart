@@ -87,7 +87,6 @@ class MockAppWidgetAndroidPlatform
 
   @override
   Future<bool?> reloadWidgets({
-    String? androidPackageName,
     String? androidProviderName,
   }) async {
     return true;

@@ -146,7 +146,6 @@ void main() {
 
       expect(
         appWidgetPlugin.reloadWidgets(
-          androidPackageName: 'com.example.app',
           androidProviderName: 'TestProvider',
         ),
         completion(true),
@@ -156,7 +155,6 @@ void main() {
         isMethodCall(
           'reloadWidgets',
           arguments: <String, Object>{
-            'androidPackageName': 'com.example.app',
             'androidProviderName': 'TestProvider',
           },
         )

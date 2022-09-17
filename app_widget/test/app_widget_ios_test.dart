@@ -62,13 +62,7 @@ void main() {
       final appWidgetPlugin = AppWidgetPlugin();
 
       expect(
-        appWidgetPlugin.configureWidget(
-          androidPackageName: '',
-          widgetId: 1,
-          itemId: 1,
-          widgetLayout: '',
-          textViewIdValueMap: {},
-        ),
+        appWidgetPlugin.configureWidget(),
         throwsA(
           isA<Error>().having(
             (e) => e.toString().contains('LateInitializationError'),
@@ -100,10 +94,7 @@ void main() {
       final appWidgetPlugin = AppWidgetPlugin();
 
       expect(
-        appWidgetPlugin.reloadWidgets(
-          androidPackageName: 'com.example.app',
-          androidProviderName: 'TestProvider',
-        ),
+        appWidgetPlugin.reloadWidgets(),
         throwsA(
           isA<Error>().having(
             (e) => e.toString().contains('LateInitializationError'),
@@ -118,13 +109,7 @@ void main() {
       final appWidgetPlugin = AppWidgetPlugin();
 
       expect(
-        appWidgetPlugin.updateWidget(
-          androidPackageName: '',
-          widgetId: 1,
-          itemId: 1,
-          widgetLayout: '',
-          textViewIdValueMap: {},
-        ),
+        appWidgetPlugin.updateWidget(),
         throwsA(
           isA<Error>().having(
             (e) => e.toString().contains('LateInitializationError'),

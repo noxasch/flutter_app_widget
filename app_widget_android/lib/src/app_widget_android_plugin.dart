@@ -86,13 +86,12 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
   @override
   Future<bool?> reloadWidgets({
-    String? androidPackageName,
     String? androidProviderName,
   }) {
-    return _methodChannel.invokeMethod<bool>('reloadWidgets', {
-      'androidPackageName': androidPackageName,
-      'androidProviderName': androidProviderName
-    });
+    return _methodChannel.invokeMethod<bool>(
+      'reloadWidgets',
+      {'androidProviderName': androidProviderName},
+    );
   }
 
   @override

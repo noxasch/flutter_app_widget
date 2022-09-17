@@ -131,11 +131,9 @@ class AppWidgetPlugin {
   /// eg: `AppWidgetExampleProvider`
   ///
   Future<bool?> reloadWidgets({
-    String? androidPackageName,
     String? androidProviderName,
   }) async {
     return AppWidgetPlatform.instance.reloadWidgets(
-      androidPackageName: androidPackageName,
       androidProviderName: androidProviderName,
     );
   }

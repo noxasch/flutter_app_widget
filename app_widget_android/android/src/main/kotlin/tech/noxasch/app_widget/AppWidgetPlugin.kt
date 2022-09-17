@@ -223,6 +223,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   /// The callback will return widgetId, itemId (if supplied) and stringUid (if supplied)
   /// This parameters can be use on app side to easily fetch the data from database or API
   /// without storing in sharedPrefs.
+  ///
+  /// TODO: support deeplinking
+  ///
   private fun createPendingClickIntent(
     activityClass: Class<*>,
     widgetId: Int,
@@ -245,30 +248,25 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
   /// force reload the widget and this will onUpdate in broadcast receiver
   private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: Result) {
-    val androidPackageName = call.argument<String>("androidPackageName")
     val widgetProviderName = call.argument<String>("androidProviderName")
-
-    if (androidPackageName == null) return result.error("-1", "androidPackageName is required!", null)
-    if (widgetProviderName == null) return result.error(
-      "-1",
-      "widgetProviderName is required!",
-      null
-    )
+        ?: return result.error(
+          "-1",
+          "widgetProviderName is required!",
+          null
+        )
 
     try {
-      val javaClass = Class.forName(androidPackageName)
-//      val widgetProviderClass = Class.forName(widgetProviderName)
       val widgetIds = AppWidgetManager.getInstance(context.applicationContext)
-        .getAppWidgetIds(ComponentName(context, javaClass))
+        .getAppWidgetIds(ComponentName(context, context.packageName))
       if (widgetIds.isEmpty()) return result.success(true)
 
       val i = Intent(context, javaClass)
       i.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
       i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
       context.sendBroadcast(i)
-      result.success(true)
+      return result.success(true)
     } catch (exception: ClassNotFoundException) {
-      result.error("-2", "No widget registered with $javaClass found!", exception)
+      return result.error("-2", "No widget registered with $javaClass found!", exception)
     }
   }
 

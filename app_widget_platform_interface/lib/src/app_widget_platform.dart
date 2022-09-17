@@ -43,7 +43,6 @@ abstract class AppWidgetPlatform extends PlatformInterface {
   }
 
   Future<bool?> reloadWidgets({
-    String? androidPackageName,
     String? androidProviderName,
   }) async {
     throw UnimplementedError();
