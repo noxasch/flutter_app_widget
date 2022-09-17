@@ -32,7 +32,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
   // the params are not require in base interface as different platform will require differet parameters
   // we handle this in platform specific and plugin interface
   Future<bool?> configureWidget({
-    String? androidAppName,
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViewIdValueMap,
@@ -43,14 +43,14 @@ abstract class AppWidgetPlatform extends PlatformInterface {
   }
 
   Future<bool?> reloadWidgets({
-    String? androidAppName,
+    String? androidPackageName,
     String? androidProviderName,
   }) async {
     throw UnimplementedError();
   }
 
   Future<bool?> updateWidget({
-    String? androidAppName,
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViewIdValueMap,

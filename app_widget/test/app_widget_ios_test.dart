@@ -4,55 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class MockAppWidgetPugin implements AppWidgetPlugin {
-  @override
-  Future<bool> cancelConfigureWidget() async {
-    return true;
-  }
-
-  @override
-  Future<bool> configureWidget({
-    required String androidAppName,
-    required int widgetId,
-    required String widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
-  }) async {
-    return true;
-  }
-
-  @override
-  Future<bool> reloadWidgets({
-    required String androidAppName,
-    required String androidProviderName,
-  }) async {
-    return true;
-  }
-
-  @override
-  Future<bool> widgetExist(int widgetId) async {
-    return true;
-  }
-
-  @override
-  Future<bool?> updateWidget({
-    required String androidAppName,
-    required int widgetId,
-    required String widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
-  }) async {
-    return true;
-  }
-
-  @override
-  Future<List<int>?> getWidgetIds({required String androidProviderName}) async {
-    return [];
-  }
-}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -112,7 +63,7 @@ void main() {
 
       expect(
         appWidgetPlugin.configureWidget(
-          androidAppName: '',
+          androidPackageName: '',
           widgetId: 1,
           itemId: 1,
           widgetLayout: '',
@@ -150,7 +101,7 @@ void main() {
 
       expect(
         appWidgetPlugin.reloadWidgets(
-          androidAppName: 'com.example.app',
+          androidPackageName: 'com.example.app',
           androidProviderName: 'TestProvider',
         ),
         throwsA(
@@ -168,7 +119,7 @@ void main() {
 
       expect(
         appWidgetPlugin.updateWidget(
-          androidAppName: '',
+          androidPackageName: '',
           widgetId: 1,
           itemId: 1,
           widgetLayout: '',

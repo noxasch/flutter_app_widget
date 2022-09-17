@@ -50,7 +50,7 @@ void main() {
 
       expect(
         appWidgetPlugin.configureWidget(
-          androidAppName: 'appname',
+          androidPackageName: 'appname',
           widgetId: 1,
           itemId: 1,
           widgetLayout: 'layoutname',
@@ -64,7 +64,7 @@ void main() {
         isMethodCall(
           'configureWidget',
           arguments: <String, Object>{
-            'androidAppName': 'appname',
+            'androidPackageName': 'appname',
             'widgetId': 1,
             'itemId': 1,
             'widgetLayout': 'layoutname',
@@ -80,7 +80,7 @@ void main() {
 
       expect(
         appWidgetPlugin.updateWidget(
-          androidAppName: 'appname',
+          androidPackageName: 'appname',
           widgetId: 1,
           itemId: 1,
           widgetLayout: 'layoutname',
@@ -94,7 +94,7 @@ void main() {
         isMethodCall(
           'updateWidget',
           arguments: <String, Object>{
-            'androidAppName': 'appname',
+            'androidPackageName': 'appname',
             'widgetId': 1,
             'itemId': 1,
             'widgetLayout': 'layoutname',
@@ -146,7 +146,7 @@ void main() {
 
       expect(
         appWidgetPlugin.reloadWidgets(
-          androidAppName: 'com.example.app',
+          androidPackageName: 'com.example.app',
           androidProviderName: 'TestProvider',
         ),
         completion(true),
@@ -156,7 +156,7 @@ void main() {
         isMethodCall(
           'reloadWidgets',
           arguments: <String, Object>{
-            'androidAppName': 'com.example.app',
+            'androidPackageName': 'com.example.app',
             'androidProviderName': 'TestProvider',
           },
         )

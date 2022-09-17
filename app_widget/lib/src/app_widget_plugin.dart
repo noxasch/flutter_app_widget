@@ -70,7 +70,7 @@ class AppWidgetPlugin {
 
   /// Configure Widget for the first time
   ///
-  /// [androidAppName] should be the app package name.
+  /// [androidPackageName] should be the app package name.
   /// eg: com.example.myapp
   ///
   /// [widgetLayout] is the layout filename without extension
@@ -90,15 +90,15 @@ class AppWidgetPlugin {
   /// in onClickWidget callback.
   ///
   Future<bool?> configureWidget({
-    required String androidAppName,
-    required int widgetId,
-    required String widgetLayout,
+    String? androidPackageName,
+    int? widgetId,
+    String? widgetLayout,
     Map<String, String>? textViewIdValueMap,
     int? itemId,
     String? stringUid,
   }) async {
     return AppWidgetPlatform.instance.configureWidget(
-      androidAppName: androidAppName,
+      androidPackageName: androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViewIdValueMap: textViewIdValueMap,
@@ -124,25 +124,25 @@ class AppWidgetPlugin {
   /// Use this if you handle widget update from `AppWidgetProvider`
   /// otherwise this method is useless.
   ///
-  /// [androidAppName] should be the app package name. <br>
+  /// [androidPackageName] should be the app package name. <br>
   /// eg: `com.example.myapp`
   ///
   /// [androidProviderName] is the provider class name which also it's filename <br>
   /// eg: `AppWidgetExampleProvider`
   ///
   Future<bool?> reloadWidgets({
-    required String androidAppName,
-    required String androidProviderName,
+    String? androidPackageName,
+    String? androidProviderName,
   }) async {
     return AppWidgetPlatform.instance.reloadWidgets(
-      androidAppName: androidAppName,
+      androidPackageName: androidPackageName,
       androidProviderName: androidProviderName,
     );
   }
 
   /// Update widget view manually
   ///
-  /// [androidAppName] should be the app package name.
+  /// [androidPackageName] should be the app package name.
   /// eg: com.example.myapp
   ///
   /// [widgetLayout] is the layout filename without extension
@@ -162,15 +162,15 @@ class AppWidgetPlugin {
   /// in onClickWidget callback.
   ///
   Future<bool?> updateWidget({
-    required String androidAppName,
-    required int widgetId,
-    required String widgetLayout,
+    String? androidPackageName,
+    int? widgetId,
+    String? widgetLayout,
     Map<String, String>? textViewIdValueMap,
     int? itemId,
     String? stringUid,
   }) async {
     return AppWidgetPlatform.instance.updateWidget(
-      androidAppName: androidAppName,
+      androidPackageName: androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViewIdValueMap: textViewIdValueMap,

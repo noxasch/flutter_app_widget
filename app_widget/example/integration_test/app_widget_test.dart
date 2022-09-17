@@ -11,7 +11,7 @@ void main() {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
     final res = await appWidgetPlugin.configureWidget(
-      androidAppName: 'tech.noxasch.app_widget_example',
+      androidPackageName: 'tech.noxasch.app_widget_example',
       widgetId: 1,
       widgetLayout: 'example_layout',
       itemId: 1,
@@ -42,7 +42,7 @@ void main() {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
     final res = await appWidgetPlugin.updateWidget(
-      androidAppName: 'tech.noxasch.app_widget_example',
+      androidPackageName: 'tech.noxasch.app_widget_example',
       widgetId: 1,
       widgetLayout: 'example_layout',
       itemId: 1,
@@ -58,7 +58,7 @@ void main() {
 
     expect(
         () => appWidgetPlugin.reloadWidgets(
-            androidAppName: 'tech.noxasch.app_widget_example',
+            androidPackageName: 'tech.noxasch.app_widget_example',
             androidProviderName: 'AppWidgetExampleProvider'),
         throwsA(isA<PlatformException>()
             .having((e) => e.code == '-2', '', isTrue)));

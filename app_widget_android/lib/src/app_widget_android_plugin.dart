@@ -45,15 +45,22 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
   @override
   Future<bool?> configureWidget({
-    String? androidAppName,
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViewIdValueMap,
     int? itemId,
     String? stringUid,
   }) {
+    assert(
+      androidPackageName != null,
+      'androidPackageName is required for android!',
+    );
+    assert(widgetId != null, 'widgetId is required for android!');
+    assert(widgetLayout != null, 'widgetLayout is required for android!');
+
     return _methodChannel.invokeMethod<bool>('configureWidget', {
-      'androidAppName': androidAppName,
+      'androidPackageName': androidPackageName,
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
       'textViewIdValueMap': textViewIdValueMap,
@@ -64,6 +71,11 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
   @override
   Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
+    assert(
+      androidProviderName != null,
+      'androidProviderName is required for android!',
+    );
+
     final widgetIds =
         await _methodChannel.invokeMethod<List<dynamic>?>('getWidgetIds', {
       'androidProviderName': androidProviderName,
@@ -74,26 +86,33 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
   @override
   Future<bool?> reloadWidgets({
-    String? androidAppName,
+    String? androidPackageName,
     String? androidProviderName,
   }) {
     return _methodChannel.invokeMethod<bool>('reloadWidgets', {
-      'androidAppName': androidAppName,
+      'androidPackageName': androidPackageName,
       'androidProviderName': androidProviderName
     });
   }
 
   @override
   Future<bool?> updateWidget({
-    String? androidAppName,
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViewIdValueMap,
     int? itemId,
     String? stringUid,
   }) {
+    assert(
+      androidPackageName != null,
+      'androidPackageName is required for android!',
+    );
+    assert(widgetId != null, 'widgetId is required for android!');
+    assert(widgetLayout != null, 'widgetLayout is required for android!');
+
     return _methodChannel.invokeMethod<bool>('updateWidget', {
-      'androidAppName': androidAppName,
+      'androidPackageName': androidPackageName,
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
       'textViewIdValueMap': textViewIdValueMap,

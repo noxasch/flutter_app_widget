@@ -130,8 +130,8 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     try {
       if (activity == null) return result.error("-2", "Not attached to any activity!", null)
 
-      val androidAppName = call.argument<String>("androidAppName")
-        ?: return result.error("-1", "androidAppName is required!", null)
+      val androidPackageName = call.argument<String>("androidPackageName")
+        ?: return result.error("-1", "androidPackageName is required!", null)
       val widgetId = call.argument<Int>("widgetId")
         ?: return result.error("-1", "widgetId is required!", null)
       val widgetLayout = call.argument<String>("widgetLayout")
@@ -140,7 +140,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
       val itemId = call.argument<Int>("itemId")
       val stringUid = call.argument<String>("stringUid")
-      val activityClass = Class.forName("$androidAppName.MainActivity")
+      val activityClass = Class.forName("$androidPackageName.MainActivity")
       val appWidgetManager = AppWidgetManager.getInstance(context)
       val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
       val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
@@ -173,8 +173,8 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   // This should only be called after the widget has been configure for the first time
   private fun updateWidget(@NonNull call: MethodCall, @NonNull result: Result) {
     try {
-      val androidAppName = call.argument<String>("androidAppName")
-        ?: return result.error("-1", "androidAppName is required!", null)
+      val androidPackageName = call.argument<String>("androidPackageName")
+        ?: return result.error("-1", "androidPackageName is required!", null)
       val widgetId = call.argument<Int>("widgetId")
         ?: return result.error("-1", "widgetId is required!", null)
       val widgetLayout = call.argument<String>("widgetLayout")
@@ -184,7 +184,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
         context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
       val itemId = call.argument<Int>("itemId")
       val stringUid = call.argument<String>("stringUid")
-      val activityClass = Class.forName("$androidAppName.MainActivity")
+      val activityClass = Class.forName("$androidPackageName.MainActivity")
       val appWidgetManager = AppWidgetManager.getInstance(context)
       val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
       val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
@@ -245,10 +245,10 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
   /// force reload the widget and this will onUpdate in broadcast receiver
   private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: Result) {
-    val androidAppName = call.argument<String>("androidAppName")
+    val androidPackageName = call.argument<String>("androidPackageName")
     val widgetProviderName = call.argument<String>("androidProviderName")
 
-    if (androidAppName == null) return result.error("-1", "androidAppName is required!", null)
+    if (androidPackageName == null) return result.error("-1", "androidPackageName is required!", null)
     if (widgetProviderName == null) return result.error(
       "-1",
       "widgetProviderName is required!",
@@ -256,7 +256,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     )
 
     try {
-      val javaClass = Class.forName(androidAppName)
+      val javaClass = Class.forName(androidPackageName)
 //      val widgetProviderClass = Class.forName(widgetProviderName)
       val widgetIds = AppWidgetManager.getInstance(context.applicationContext)
         .getAppWidgetIds(ComponentName(context, javaClass))

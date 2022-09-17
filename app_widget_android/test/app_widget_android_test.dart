@@ -74,7 +74,7 @@ class MockAppWidgetAndroidPlatform
 
   @override
   Future<bool?> configureWidget({
-    String? androidAppName,
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     String? widgetContainerName,
@@ -87,7 +87,7 @@ class MockAppWidgetAndroidPlatform
 
   @override
   Future<bool?> reloadWidgets({
-    String? androidAppName,
+    String? androidPackageName,
     String? androidProviderName,
   }) async {
     return true;
@@ -95,7 +95,7 @@ class MockAppWidgetAndroidPlatform
 
   @override
   Future<bool?> updateWidget({
-    String? androidAppName,
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViewIdValueMap,
