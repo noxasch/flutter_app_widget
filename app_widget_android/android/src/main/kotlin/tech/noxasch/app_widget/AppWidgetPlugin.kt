@@ -190,7 +190,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
 
       if (textViewIdValueMap != null) {
-        val views: RemoteViews = RemoteViews(context.packageName, widgetLayoutId)
+        val views = RemoteViews(context.packageName, widgetLayoutId)
 
         for ((key, value) in textViewIdValueMap) {
           val textViewId: Int =
@@ -246,7 +246,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     return PendingIntent.getActivity(context, 0, intent, pendingIntentFlag)
   }
 
-  /// force reload the widget and this will onUpdate in broadcast receiver
+  /// force reload the widget and this will trigger onUpdate in broadcast receiver
   private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: Result) {
     val widgetProviderName = call.argument<String>("androidProviderName")
         ?: return result.error(
@@ -256,8 +256,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
         )
 
     try {
-      val widgetIds = AppWidgetManager.getInstance(context.applicationContext)
-        .getAppWidgetIds(ComponentName(context, context.packageName))
+      val widgetProvider = ComponentName(context, widgetProviderName)
+      val widgetManager = AppWidgetManager.getInstance(context.applicationContext)
+      val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
       if (widgetIds.isEmpty()) return result.success(true)
 
       val i = Intent(context, javaClass)
@@ -323,6 +324,3 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     return true
   }
 }
-
-
-
