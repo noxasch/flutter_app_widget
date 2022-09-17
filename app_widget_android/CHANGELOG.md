@@ -1,3 +1,8 @@
+## 0.1.0
+
+* Support flavored app
+* Fix update method
+* finalized android params name
 ## 0.0.4
 
 * implement `handleConfigureAction` android method

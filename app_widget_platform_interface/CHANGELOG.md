@@ -1,3 +1,8 @@
+
+## 0.1.0
+
+* finalize interface based on android usage
+
 ## 0.0.3
 
 * implement getWidgetIds api interface
