@@ -1,9 +1,7 @@
 # App Widget
 
-Since flutter engine are build on android activity, we cannot directly build
-the the widget interface using flutter. Hence it need to be build using the native
-way. This plugin attempt to exposed as much useful API and callback to flutter to reduce
-going back and forth to native.
+This plugin attempt to exposed as much useful API and callback to flutter to reduce
+going back and forth to native and make buidling app widget / home screen widget easier.
 
 ## Plaform Support
 
@@ -11,29 +9,16 @@ going back and forth to native.
 | :-----: | :-: |
 |   ✔️    |   |
 
-### Android
-
-This plugin introduce some api from the android native and provide some suggestion on how
-to include an app widget with you flutter application.
-
-App widget is a like a mini app and are actually separated from your main app.
-It have limited capability on it's own and can't actually talk to the main app directly
-after the first configuration.
-
-This mean after the first config, there is no way we can talk directly to the widget.
-There are two way we can update the widget:
-
-1. Using sharedPreferences and AppWidgetProvider
-2. Using workmanager scheduled task
-
-
 ## Using this package
 
 ### Platform setup
 
 #### Android
 
-1. Add widget layout
+> Note: It is advisable to do this setup using Android Studio since it help you design the widget layout and proper linting and import in kotlin file.
+
+
+1. Add widget layout in `android/app/src/main/res/layout/example_layout.xml`
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -82,7 +67,7 @@ There are two way we can update the widget:
     android:widgetFeatures="reconfigurable">
 </appwidget-provider>
  <!--
-   android:configure - named it to your app MainActivity
+   android:configure - full app name .MainActivity
    android:initialLayout - should point to an actual layout for the widget
    refer to https://developer.android.com/develop/ui/views/appwidgets/overview
  -->
@@ -104,9 +89,11 @@ There are two way we can update the widget:
     </activity>
   ```
 
-  - add appwidget provider for widget update and deleted intent
+  - add receiver for widget provider to listen to widget event (after Activity block)
 
   ```xml
+  </activity>
+  <!-- after or outside activity -->
   <receiver android:exported="true" android:name="MyWidgetProvider">
       <intent-filter>
           <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -116,32 +103,44 @@ There are two way we can update the widget:
           android:resource="@xml/app_widget_example_info" />
   </receiver>
   ```
-4. Create the widget provider
-Inherit from Android `AppWidgetProvider` and implement the required method if needed. Since the plugin already provice interface to update widget, we can leave the `onUpdate` method and handle it on dart side.
+4. Create the widget provider in `android/app/src/main/kotlin/your/domain/path/MyWidgetExampleProvider.kt`
+Inherit from Android `AppWidgetProvider` and implement the required method if needed. Since the plugin already provice interface to update widget, we can leave it empty and handle it on dart/flutter side.
 
-    Probably you want to implement `onDeleted` method to handle cleanup like removing the widget Id from sharePrefences allow user to add multiple widget.
+    Probably you want to implement `onDeleted` or `onDisabled` method to handle cleanup like removing the widget Id from sharedPrefences allow user to add multiple widget.
+
+```kotlin
+class MyWidgetExampleProvider : AppWidgetProvider() {
+}
+```
 
 5. Update MainActivity to handle `onConfigure` intent
 
 ```kotlin
-// add this import
+package com.example.my_app
+
+import android.appwidget.AppWidgetManager
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
 import tech.noxasch.app_widget.AppWidgetPlugin
 
-// this need to be implemented manually
 class MainActivity: FlutterActivity() {
   override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
 
-    // add this line
+    // Add this block
     if (intent.action == AppWidgetManager.ACTION_APPWIDGET_CONFIGURE) {
       AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
     }
-
   }
 }
 ```
 
-6. Implement android WidgetProvider
+6. By now you should be able to add a widget. Next step is to configure it from flutter side
+and make sure the widget configured.
+
+7. Implement onEnabled (update widget on reboot) - this has to be done from android ?
+
+6. Implement android WidgetProvider - Already done
 
 7. Handling update in native (Optional) - TODO
 
@@ -161,9 +160,11 @@ appWidgetPlugin.cancelConfigure()
 #### handling onConfigureWidget
 
 ```dart
+// this method can be declare as a top level function or inside a widget
 void onConfigureWidget(int widgetId) {
   // handle widget configuration
-  // use launchUrl and deeplink redirect to configuration page
+  // eg:
+  // redirect or use launchUrl and deeplink redirect to configuration page
 }
 
 // onConfigureWidget callback are optional
@@ -176,7 +177,8 @@ final appWidgetPlugin = AppWidgetPlugin(
 // only use this method in widget configuration screen as
 // it method will close the app which require to signal the widget config completion
 appWidgetPlugin.configureWidget(
-  androidAppName: 'tech.noxasch.app_widget_example',
+   // change to androidPackageName - we needed as param since there is no standard on how long the domain name can be
+  androidPackageName: 'tech.noxasch.app_widget_example',
   widgetId: _widgetId!,
   widgetLayout: 'example_layout',
   textViewIdValueMap: {
@@ -188,9 +190,11 @@ appWidgetPlugin.configureWidget(
 #### handling onClickWidget
 
 ```dart
+// this method can be declare as a top level function or inside a widget
 void onClickWidget(int widgetId) {
   // handle click widget event
-  // do something
+  // eg:
+  // redirect to item page
   // use launchUrl and deeplink redirect
 }
 
@@ -202,12 +206,20 @@ final appWidgetPlugin = AppWidgetPlugin(
 ```
 
 #### Updating widget
+There are two ways we can update the widget on Android:
+
+1. Using sharedPreferences and AppWidgetProvider
+2. Using workmanager scheduled task
+
+You can get the `widgetId` if you store the id during `onConfigureWidget` or call `appWidgetPlugin.getWidgetIds()`
+to get all widgets Id.
+
 Most of the time you'll want to update widget via workmanager. See below
-how to use the extension in workmanager
+how to use the extension in workmanager.
 
 ```dart
 appWidgetPlugin.updateWidget(
-  androidAppName: 'tech.noxasch.app_widget_example',
+  androidPackageName: 'tech.noxasch.app_widget_example',
   widgetId: _widgetId!,
   widgetLayout: 'example_layout',
   textViewIdValueMap: {
@@ -217,11 +229,14 @@ appWidgetPlugin.updateWidget(
 ```
 
 #### Using Workmanager
-
 TODO
+
+#### Dark Mode
+- move this to blog post add link and also link to android official docs
 
 ## Checklist
 - [x] Unit Test
 - [ ] update documentation
 - [ ] Update example app
 - [ ] Update Screenshot
+- [ ] iOS support
