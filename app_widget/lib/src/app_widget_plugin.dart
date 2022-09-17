@@ -120,12 +120,11 @@ class AppWidgetPlugin {
 
   /// Force reload all widgets
   ///
-  /// This will trigger onUpdate method on android side.
-  /// Use this if you handle widget update from `AppWidgetProvider`
-  /// otherwise this method is useless.
+  /// This is a convenient method to force reload all widgets from dart side.
   ///
-  /// [androidPackageName] should be the app package name. <br>
-  /// eg: `com.example.myapp`
+  /// This will trigger onUpdate method on android side.
+  /// Use this if you handle widget update from `AppWidgetProvider` directly
+  /// otherwise this method is useless.
   ///
   /// [androidProviderName] is the provider class name which also it's filename <br>
   /// eg: `AppWidgetExampleProvider`
@@ -145,7 +144,8 @@ class AppWidgetPlugin {
   ///
   /// [widgetLayout] is the layout filename without extension
   ///
-  /// Get the [WidgetId] from [onConfigureWidget] callback.
+  /// Get the [WidgetId] from [onConfigureWidget] callback when the widget
+  /// is created for the first time.
   ///
   /// [textViewIdValueMap] is the id defined in layout `<TextView android:id="@+id/widget_title"`
   ///
@@ -177,7 +177,7 @@ class AppWidgetPlugin {
     );
   }
 
-  /// Check if widget with given [widgetId] exist
+  /// return [true] if a widget with given [widgetId] exist
   Future<bool?> widgetExist(int widgetId) async {
     return AppWidgetPlatform.instance.widgetExist(widgetId);
   }

@@ -59,6 +59,8 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     throw UnimplementedError();
   }
 
+  /// get all widgets ids associated with the given provider
+  /// will throw an error if the provider doesn't exist
   Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
     throw UnimplementedError();
   }
