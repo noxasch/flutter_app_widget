@@ -21,8 +21,8 @@ thing on flutter/dart.
 Platform Setup
 - [Android]()
     - [Android Setup](#android-setup)
-    - [Plugin Api Usage](#in-app-usage-and-dartflutter-api)
-    - [Update using flutter workmanager](#handling-widget-update-using-appwidgetprovider-in-kotlin)
+    - [Plugin Api Usage and callbaks](#in-app-usage-and-dartflutter-api)
+    - [Update using flutter workmanager](#handling-widget-update-using-in-flutter-workmanger)
     - [Update widget using widget provider in kotlin](#handling-widget-update-using-appwidgetprovider-in-kotlin)
 
 ### Platform setup
