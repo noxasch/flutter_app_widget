@@ -45,6 +45,12 @@ Which by you can handle this in flutter using:
 1. [Flutter Workmanager](https://pub.dev/packages/workmanager)
 2. [android_alarm_manager_plus](https://pub.dev/packages/android_alarm_manager_plus)
 3. Natively using `AppWidgetProvider`
+
+##### Android Flavor support
+
+As of version 0.1.0, this plugin support flavor and there are
+no special configuration needed.
+
 ##### Android Setup
 
 
