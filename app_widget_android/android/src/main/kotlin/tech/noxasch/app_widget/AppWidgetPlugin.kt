@@ -59,7 +59,8 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
        val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
        if (widgetId == 0) return
 
-       val configIntent = intent.setAction(AppWidgetPlugin.CONFIGURE_WIDGET_ACTION)
+       val configIntent = Intent(context, context.javaClass)
+       configIntent.action = AppWidgetPlugin.CONFIGURE_WIDGET_ACTION
        configIntent.putExtra("widgetId", widgetId)
        context.startActivity(configIntent)
      }
@@ -99,16 +100,16 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
       return result.success(widgetIds)
     } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
+      return result.error("-2", exception.message, exception)
     }
   }
 
   private fun cancelConfigureWidget(@NonNull result: Result) {
     try {
       activity!!.setResult(Activity.RESULT_CANCELED)
-      result.success(true)
+      return result.success(true)
     } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
+      return result.error("-2", exception.message, exception)
     }
   }
 
@@ -121,7 +122,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
       return result.success(true)
     } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
+      return result.error("-2", exception.message, exception)
     }
   }
 
@@ -164,9 +165,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
       activity!!.setResult(Activity.RESULT_OK, resultValue)
       activity!!.finish()
-      result.success(true)
+      return result.success(true)
     } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
+      return result.error("-2", exception.message, exception)
     }
   }
 
@@ -265,9 +266,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       i.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
       i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
       context.sendBroadcast(i)
-      return result.success(true)
+      result.success(true)
     } catch (exception: ClassNotFoundException) {
-      return result.error("-2", "No widget registered with $javaClass found!", exception)
+      return result.error("-2", "No widget registered with $widgetProviderName found!", exception)
     }
   }
 
