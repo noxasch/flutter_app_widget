@@ -19,11 +19,12 @@ by inherit the base platform interface and expose the require api to the main `a
 plugin.
 
 ## Contributing
-
-1. Add feature and unit test
-2. Make sure all unit test pass
-3. Add platform integration test and run integration test
-4. Create a PR
+0. Fork
+1. Checkout to feature branch
+2. Add feature and unit test
+3. Make sure all unit test pass
+4. Add platform integration test and run integration test
+5. Create a PR
 
 ## Android Integration Test
 - Make sure to run on the latest and minSdk supported

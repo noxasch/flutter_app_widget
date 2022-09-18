@@ -286,8 +286,7 @@ if (await appWidgetPlugin.widgetExist(widgetId)) {
 
 ### getWidgetIds
 - return widgetIds which utilized `appWidgetManager.getAppWidgetIds` on android
-- this method is unreliable as it may include ghost widget and removed widget
-- see this [issue](https://stackoverflow.com/questions/12462696/appwidgetmanager-getappwidgetids-returning-old-widget-ids)
+- might be unreliable. if you have a problem see this [issue](https://stackoverflow.com/questions/12462696/appwidgetmanager-getappwidgetids-returning-old-widget-ids)
 
 ```dart
 await appWidgetPlugin.getWidgetIds(
@@ -403,10 +402,6 @@ Will include a sample using `flutter workmanager` and `AppWidgetProvider`
 
 6. Implement android WidgetProvider - Already done
 
-7. Handling update in native (Optional) - TODO
-
-7. Implement workmanager in flutter - TODO
-
 #### Dark Mode
 - move this to blog post add link and also link to android official docs
 -->
@@ -418,6 +413,8 @@ Will include a sample using `flutter workmanager` and `AppWidgetProvider`
 ## Checklist
 - [x] Unit Test
 - [x] update documentation to cover api usage
-- [ ] Update example app
-- [ ] Update Screenshot
+- [ ] Test example
+- [x] Update example app
+- [ ] Github Action CI
+- [x] Update Screenshot
 - [ ] iOS support
