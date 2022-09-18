@@ -60,7 +60,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
        if (widgetId == 0) return
 
        val configIntent = Intent(context, context.javaClass)
-       configIntent.action = AppWidgetPlugin.CONFIGURE_WIDGET_ACTION
+       configIntent.action = CONFIGURE_WIDGET_ACTION
        configIntent.putExtra("widgetId", widgetId)
        context.startActivity(configIntent)
      }
@@ -93,9 +93,9 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: Result) {
     try {
       val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
-      val widgetProvider = ComponentName(context, widgetProviderName)
+      val widgetProviderClass = Class.forName("${context.packageName}.$widgetProviderName")
+      val widgetProvider = ComponentName(context, widgetProviderClass)
       val widgetManager = AppWidgetManager.getInstance(context)
-
       val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
 
       return result.success(widgetIds)
@@ -105,24 +105,24 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   }
 
   private fun cancelConfigureWidget(@NonNull result: Result) {
-    try {
+    return try {
       activity!!.setResult(Activity.RESULT_CANCELED)
-      return result.success(true)
+      result.success(true)
     } catch (exception: Exception) {
-      return result.error("-2", exception.message, exception)
+      result.error("-2", exception.message, exception)
     }
   }
 
   private fun widgetExist(@NonNull call: MethodCall, @NonNull result: Result) {
     val widgetId = call.argument<Int>("widgetId") ?: return result.success(false)
-    try {
+    return try {
       val widgetManager = AppWidgetManager.getInstance(context)
       val widgetInfo: AppWidgetProviderInfo =
         widgetManager.getAppWidgetInfo(widgetId) ?: return result.success(false)
 
-      return result.success(true)
+      result.success(true)
     } catch (exception: Exception) {
-      return result.error("-2", exception.message, exception)
+      result.error("-2", exception.message, exception)
     }
   }
 
@@ -257,12 +257,14 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
         )
 
     try {
-      val widgetProvider = ComponentName(context, widgetProviderName)
-      val widgetManager = AppWidgetManager.getInstance(context.applicationContext)
+      val widgetClass = Class.forName("${context.packageName}.$widgetProviderName")
+      val widgetProvider = ComponentName(context, widgetClass)
+      val widgetManager = AppWidgetManager.getInstance(context)
       val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
+
       if (widgetIds.isEmpty()) return result.success(true)
 
-      val i = Intent(context, javaClass)
+      val i = Intent(context, context.javaClass)
       i.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
       i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
       context.sendBroadcast(i)
@@ -312,8 +314,8 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
 
   private fun handleClickIntent(intent: Intent): Boolean {
     val widgetId = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)
-    val itemId = intent.extras?.getInt(AppWidgetPlugin.EXTRA_APP_ITEM_ID)
-    val stringUid = intent.extras?.getInt(AppWidgetPlugin.EXTRA_APP_STRING_UID)
+    val itemId = intent.extras?.getInt(EXTRA_APP_ITEM_ID)
+    val stringUid = intent.extras?.getInt(EXTRA_APP_STRING_UID)
 
     val payload = mapOf(
       "widgetId" to widgetId,
@@ -321,7 +323,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
       "stringUid" to stringUid,
     )
 
-    channel.invokeMethod(AppWidgetPlugin.ON_ClICK_WIDGET_CALLBACK, payload)
+    channel.invokeMethod(ON_ClICK_WIDGET_CALLBACK, payload)
     return true
   }
 }
