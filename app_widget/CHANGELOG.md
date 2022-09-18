@@ -1,3 +1,11 @@
+## 0.1.1
+
+* perf: improve configure widget callback response
+* fix: fix reload wigdets
+* fix: fix getWidgetIds
+* docs: update docs
+* docs: update example app
+
 ## 0.1.0
 
 * Support flavored app

@@ -1,8 +1,14 @@
+## 0.1.1
+
+* perf: improve configure widget callback response
+* fix: fix reload wigdets
+* fix: fix getWidgetIds
+
 ## 0.1.0
 
-* Support flavored app
-* Fix update method
-* finalized android params name
+* feat: support flavored app
+* fix: update method
+* chore: finalized android params name
 ## 0.0.4
 
 * implement `handleConfigureAction` android method
