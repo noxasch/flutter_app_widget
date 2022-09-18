@@ -3,9 +3,9 @@
 This plugin attempt to exposed as much useful API and callback to flutter to reduce
 going back and forth to native and make buidling app widget / home screen widget easier.
 
-|             |  |
--------------------------|-------------------------
-!![screen_shot](assets/screen_shot.webp)  |  ![gif](assets/example_app.gif)
+|                                         |                                 |
+| ---                                     | ---                             |
+|![screen_shot](assets/screen_shot.webp)  |  ![gif](assets/example_app.gif) |
 
 
 ## Plaform Support
@@ -18,8 +18,7 @@ going back and forth to native and make buidling app widget / home screen widget
 
 ### Widget Storage and Caching
 This plugin doesn't dictate on how to handle widget update/storage/caching.
-It simply for provide necessary api in case dev want to handle most of those
-thing on flutter/dart.
+It simply provide api to manage the widget from flutter.
 
 ### Table Of Content
 
@@ -184,6 +183,8 @@ await appWidgetPlugin.configureWidget(...)
 #### handling onConfigureWidget
 
 ```dart
+// @pragma('vm:entry-point') anonnotate is to indicate thate the method may be invoked directly from native
+// More info: https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md
 // this method can be declare as a top level function or inside a widget
 @pragma('vm:entry-point')
 void onConfigureWidget(int widgetId) async {
@@ -244,11 +245,10 @@ final appWidgetPlugin = AppWidgetPlugin(
 ```
 
 #### updateWidget
-You can get the `widgetId` if you store the id during `onConfigureWidget` or call `appWidgetPlugin.getWidgetIds()`
-to get all widgets Id.
+Make sure you store the `widgetId` during widget configuration.
 
-Most of the time you'll want to update widget via workmanager. See below
-how to use the extension in workmanager.
+Most of the time you'll want to update widget via workmanager. See [below](#handling-widget-update-using-in-flutter-workmanger)
+how to use the plugin in workmanager.
 
 ```dart
 await appWidgetPlugin.updateWidget(
@@ -262,7 +262,6 @@ await appWidgetPlugin.updateWidget(
 ```
 
 #### reloadWidgets
-
 - use this method if you handle update in your widget provider want want to trigger force
 reload widgets from flutter
 - this will trigger `onUpdate` intent in your widget provider
@@ -274,17 +273,20 @@ await appWidgetPlugin.reloadWidgets(
 ```
 
 #### widgetExist
+- check if widget is exist
+- on android this utilize `appWidgetManager.getAppWidgetInfo`
 
 ```dart
 final widgetId = 12;
+
 if (await appWidgetPlugin.widgetExist(widgetId)) {
   // do something if widget exist
 }
 ```
 
 ### getWidgetIds
-- return widgetIds
-- this is unreliable - store your widget id manualy
+- return widgetIds which utilized `appWidgetManager.getAppWidgetIds` on android
+- this method is unreliable as it may include ghost widget and removed widget
 - see this [issue](https://stackoverflow.com/questions/12462696/appwidgetmanager-getappwidgetids-returning-old-widget-ids)
 
 ```dart
@@ -325,8 +327,6 @@ void onConfigureWidget(int widgetId) async {
 // in callbackDipatcher or some other file
 final worksMapper = {'updateWidget': updateWidgetWorker};
 
-// https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md
-///
 @pragma('vm:entry-point')
 void callbackDipatcher() async {
   Workmanager().executeTask((taskName, inputData) async {
