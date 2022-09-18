@@ -12,13 +12,6 @@ void main() {
   runApp(const MyApp());
 }
 
-// void onConfigureWidget(int widgetId) {
-//   // skip if zero - seems like a bug whenever flutter restart
-//   print('NOXASCH: DARTTT $widgetId');
-//   // 1. open deeplink with params
-//   // launchUrl(Uri.parse('https://www.google.com'));
-// }
-
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -40,7 +33,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void onConfigureWidget(int widgetId) {
-    _widgetId = widgetId;
+    setState(() => _widgetId = widgetId);
     // do something
   }
 
@@ -51,28 +44,32 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('AppWidgetPlugin example app'),
         ),
-        body: Column(
-          children: [
-            ConfigureButton(
-                widgetId: _widgetId, appWidgetPlugin: _appWidgetPlugin),
-            const SizedBox(
-              height: 10,
-            ),
-          ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ConfigureButton(
+                  widgetId: _widgetId, appWidgetPlugin: _appWidgetPlugin),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
         ),
-        floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.settings_applications),
+        floatingActionButton: FloatingActionButton.extended(
+            label: const Text('Update'),
             onPressed: () async {
               if (_widgetId != null) {
                 // this means the app is started by the widget config event
 
                 // send configure
-                await _appWidgetPlugin.configureWidget(
+                await _appWidgetPlugin.updateWidget(
+                    androidPackageName: 'tech.noxasch.app_widget_example',
                     widgetId: _widgetId!,
                     widgetLayout: 'example_layout',
                     textViewIdValueMap: {
-                      'widget_title': 'MY WIDGET',
-                      'widget_message': 'This is my widget message'
+                      'widget_title': 'App Widget',
+                      'widget_message': 'Updated in flutter'
                     });
               } else {
                 await _appWidgetPlugin.reloadWidgets(
@@ -107,15 +104,15 @@ class ConfigureButton extends StatelessWidget {
 
             // send configure
             await _appWidgetPlugin.configureWidget(
+                androidPackageName: 'tech.noxasch.app_widget_example',
                 widgetId: _widgetId!,
                 widgetLayout: 'example_layout',
                 textViewIdValueMap: {
-                  'widget_title': 'MY WIDGET',
-                  'widget_message': 'This is my widget message'
+                  'widget_title': 'App Widget',
+                  'widget_message': 'Configured in flutter'
                 });
-            messenger.showSnackBar(const SnackBar(
-                content:
-                    Text('Opps, no widget id from WIDGET_CONFUGRE event')));
+            messenger.showSnackBar(
+                const SnackBar(content: Text('Widget has been configured!')));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content:
