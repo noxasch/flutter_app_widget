@@ -21,6 +21,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final AppWidgetPlugin _appWidgetPlugin;
+  late final TextEditingController _controller;
   int? _widgetId;
 
   @override
@@ -30,6 +31,13 @@ class _MyAppState extends State<MyApp> {
       onConfigureWidget: onConfigureWidget,
       onClickWidget: onClickWidget,
     );
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   void onConfigureWidget(int widgetId) {
@@ -48,37 +56,177 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: TextField(
+                  decoration: const InputDecoration(label: Text('Widget Id')),
+                  controller: _controller,
+                  keyboardType: TextInputType.number,
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               ConfigureButton(
                   widgetId: _widgetId, appWidgetPlugin: _appWidgetPlugin),
               const SizedBox(
                 height: 10,
               ),
+              WidgetExistButton(
+                controller: _controller,
+                appWidgetPlugin: _appWidgetPlugin,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              ReloadWidgetButton(appWidgetPlugin: _appWidgetPlugin),
+              const SizedBox(
+                height: 10,
+              ),
+              UpdateWidgetButton(
+                  controller: _controller, appWidgetPlugin: _appWidgetPlugin),
+              const SizedBox(
+                height: 10,
+              ),
+              GetWidgetIdsButton(appWidgetPlugin: _appWidgetPlugin),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-            label: const Text('Update'),
-            onPressed: () async {
-              if (_widgetId != null) {
-                // this means the app is started by the widget config event
-
-                // send configure
-                await _appWidgetPlugin.updateWidget(
-                    androidPackageName: 'tech.noxasch.app_widget_example',
-                    widgetId: _widgetId!,
-                    widgetLayout: 'example_layout',
-                    textViewIdValueMap: {
-                      'widget_title': 'App Widget',
-                      'widget_message': 'Updated in flutter'
-                    });
-              } else {
-                await _appWidgetPlugin.reloadWidgets(
-                    androidProviderName:
-                        'tech.noxasch.app_widget.AppWidgetBroadcastReceiver');
-              }
-            }),
       ),
     );
+  }
+}
+
+class UpdateWidgetButton extends StatelessWidget {
+  const UpdateWidgetButton({
+    Key? key,
+    required TextEditingController controller,
+    required AppWidgetPlugin appWidgetPlugin,
+  })  : _controller = controller,
+        _appWidgetPlugin = appWidgetPlugin,
+        super(key: key);
+
+  final TextEditingController _controller;
+  final AppWidgetPlugin _appWidgetPlugin;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+
+        if (_controller.text.isNotEmpty) {
+          // this means the app is started by the widget config event
+          final widgetId = int.parse(_controller.text);
+
+          // send configure
+          await _appWidgetPlugin.updateWidget(
+              androidPackageName: 'tech.noxasch.app_widget_example',
+              widgetId: widgetId,
+              widgetLayout: 'example_layout',
+              textViewIdValueMap: {
+                'widget_title': 'App Widget',
+                'widget_message': 'Updated in flutter'
+              });
+        }
+      },
+      child: const Text('Update Widget'),
+    );
+  }
+}
+
+class GetWidgetIdsButton extends StatelessWidget {
+  const GetWidgetIdsButton({
+    Key? key,
+    required AppWidgetPlugin appWidgetPlugin,
+  })  : _appWidgetPlugin = appWidgetPlugin,
+        super(key: key);
+
+  final AppWidgetPlugin _appWidgetPlugin;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        final widgetIds = await _appWidgetPlugin.getWidgetIds(
+            androidProviderName: 'AppWidgetExampleProvider');
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('widget ids: ${widgetIds ?? ""}'),
+          ),
+        );
+      },
+      child: const Text('Get WidgetIds'),
+    );
+  }
+}
+
+class ReloadWidgetButton extends StatelessWidget {
+  const ReloadWidgetButton({
+    Key? key,
+    required AppWidgetPlugin appWidgetPlugin,
+  })  : _appWidgetPlugin = appWidgetPlugin,
+        super(key: key);
+
+  final AppWidgetPlugin _appWidgetPlugin;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final messenger = ScaffoldMessenger.of(context);
+        await _appWidgetPlugin.reloadWidgets(
+            androidProviderName: 'AppWidgetExampleProvider');
+        messenger.showSnackBar(
+          const SnackBar(
+            content:
+                Text('Reload broadcast has been sent check Android debug log'),
+          ),
+        );
+      },
+      child: const Text('Reload Widgets'),
+    );
+  }
+}
+
+class WidgetExistButton extends StatelessWidget {
+  const WidgetExistButton({
+    Key? key,
+    required TextEditingController controller,
+    required AppWidgetPlugin appWidgetPlugin,
+  })  : _controller = controller,
+        _appWidgetPlugin = appWidgetPlugin,
+        super(key: key);
+
+  final TextEditingController _controller;
+  final AppWidgetPlugin _appWidgetPlugin;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () async {
+          if (_controller.text.isNotEmpty) {
+            final messenger = ScaffoldMessenger.of(context);
+
+            final widgetId = int.parse(_controller.text);
+            final exist = (await _appWidgetPlugin.widgetExist(widgetId))!;
+            if (exist) {
+              messenger.showSnackBar(
+                const SnackBar(
+                  content: Text('This widget exist.'),
+                ),
+              );
+            } else {
+              messenger.showSnackBar(
+                SnackBar(
+                  content: Text('Widget with id $widgetId does not exist.'),
+                ),
+              );
+            }
+          }
+        },
+        child: const Text('check if Widget Exist'));
   }
 }
 

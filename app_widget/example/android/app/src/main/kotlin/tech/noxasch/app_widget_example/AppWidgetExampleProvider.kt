@@ -13,23 +13,29 @@ import io.flutter.plugin.common.MethodChannel
 import tech.noxasch.app_widget.AppWidgetPlugin
 
 class AppWidgetExampleProvider : AppWidgetProvider() {
-  //  override fun onUpdate(
-  //      context: Context?,
-  //      appWidgetManager: AppWidgetManager?,
-  //      appWidgetIds: IntArray?
-  //  ) {
-  //      super.onUpdate(context, appWidgetManager, appWidgetIds)
+    override fun onUpdate(
+        context: Context?,
+        appWidgetManager: AppWidgetManager?,
+        appWidgetIds: IntArray?
+    ) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        
+        if (appWidgetIds != null) {
+            for (widgetId in appWidgetIds) {
+                Log.d("WIDGET_ON_UPDATE ID", "$widgetId")
+            }
+        }
 
-  //      // check if widgetId store sharedPreferences
-  //      // fetch data from sharedPreferences
-  //      // then update
-  //      for (widgetId in appWidgetIds!!) {
-  //          val remoteViews = RemoteViews(context!!.packageName, R.layout.example_layout).apply() {
-  //              setTextViewText(R.id.widget_title, "Widget Title")
-  //              setTextViewText(R.id.widget_message, "This is my message")
-  //          }
-
-  //          appWidgetManager!!.partiallyUpdateAppWidget(widgetId, remoteViews)
-  //      }
-  //  }
+        // check if widgetId store sharedPreferences
+        // fetch data from sharedPreferences
+        // then update
+//        for (widgetId in appWidgetIds!!) {
+//            val remoteViews = RemoteViews(context!!.packageName, R.layout.example_layout).apply() {
+//                setTextViewText(R.id.widget_title, "Widget Title")
+//                setTextViewText(R.id.widget_message, "This is my message")
+//            }
+//
+//            appWidgetManager!!.partiallyUpdateAppWidget(widgetId, remoteViews)
+//        }
+    }
 }

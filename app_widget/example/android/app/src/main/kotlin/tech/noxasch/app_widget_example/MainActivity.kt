@@ -14,5 +14,4 @@ class MainActivity: FlutterActivity() {
       AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
     }
   }
-
 }
