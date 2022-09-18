@@ -3,6 +3,11 @@
 This plugin attempt to exposed as much useful API and callback to flutter to reduce
 going back and forth to native and make buidling app widget / home screen widget easier.
 
+|             |  |
+-------------------------|-------------------------
+!![screen_shot](assets/screen_shot.webp)  |  ![gif](assets/example_app.gif)
+
+
 ## Plaform Support
 
 | Android | iOS |

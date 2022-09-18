@@ -1,9 +1,9 @@
-# App Widget
+# Flutter App Widget
 App Widget / Home Screen widget plugin for flutter app
 
 ## Usage
 
-Please see `app_widget` subdirectory for the usage documentation.
+Please see [app_widget](./app_widget) subdirectory for the usage documentation.
 
 ## Plaform Support
 
