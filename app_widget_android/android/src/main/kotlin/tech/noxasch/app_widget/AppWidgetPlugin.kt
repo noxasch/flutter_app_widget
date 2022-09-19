@@ -3,7 +3,6 @@ package tech.noxasch.app_widget
 import android.app.Activity
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProviderInfo
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -117,8 +116,7 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     val widgetId = call.argument<Int>("widgetId") ?: return result.success(false)
     return try {
       val widgetManager = AppWidgetManager.getInstance(context)
-      val widgetInfo: AppWidgetProviderInfo =
-        widgetManager.getAppWidgetInfo(widgetId) ?: return result.success(false)
+      widgetManager.getAppWidgetInfo(widgetId) ?: return result.success(false)
 
       result.success(true)
     } catch (exception: Exception) {
@@ -256,21 +254,19 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
           null
         )
 
-    try {
+    return try {
       val widgetClass = Class.forName("${context.packageName}.$widgetProviderName")
       val widgetProvider = ComponentName(context, widgetClass)
       val widgetManager = AppWidgetManager.getInstance(context)
       val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
 
-      if (widgetIds.isEmpty()) return result.success(true)
-
-      val i = Intent(context, context.javaClass)
-      i.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-      i.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
-      context.sendBroadcast(i)
+      val reloadIntent = Intent()
+      reloadIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+      reloadIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
+      context.sendBroadcast(reloadIntent)
       result.success(true)
-    } catch (exception: ClassNotFoundException) {
-      return result.error("-2", "No widget registered with $widgetProviderName found!", exception)
+    } catch (exception: Exception) {
+      result.error("-2", exception.message, exception)
     }
   }
 
