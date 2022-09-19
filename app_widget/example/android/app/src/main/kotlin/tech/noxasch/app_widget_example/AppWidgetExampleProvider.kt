@@ -19,7 +19,7 @@ class AppWidgetExampleProvider : AppWidgetProvider() {
         appWidgetIds: IntArray?
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        
+
         if (appWidgetIds != null) {
             for (widgetId in appWidgetIds) {
                 Log.d("WIDGET_ON_UPDATE ID", "$widgetId")

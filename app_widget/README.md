@@ -405,6 +405,69 @@ Will include a sample using `flutter workmanager` and `AppWidgetProvider`
 - move this to blog post add link and also link to android official docs
 -->
 
+#### Testing
+You can test this plugin by mocking the required methodChannel directly and set
+debugDefaultTargetPlatformOverride to your preferred platform if needed.
+
+```dart
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  const MethodChannel channel = MethodChannel(AppWidgetPlatform.channel);
+  final List<MethodCall> log = <MethodCall>[];
+
+  channel.setMockMethodCallHandler((methodCall) async {
+      log.add(methodCall);
+      switch (methodCall.method) {
+        case 'configureWidget':
+          return true;
+        case 'cancelConfigureWidget':
+          return true;
+        case 'getWidgetIds':
+          return [42];
+        case 'reloadWidgets':
+          return true;
+        case 'updateWidget':
+          return true;
+        case 'widgetExist':
+          return true;
+        default:
+      }
+    });
+  });
+
+  setUp(() {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+  });
+
+  tearDown(() {
+    log.clear();
+  });
+
+  test('', () async {
+    final appwidgetPlugin = AppWidgetPlugin();
+
+    expect(await appwidgetPlugin.configureWidget(
+      ...
+    ), isTrue);
+
+    // testing if your method that call configureWidget sending the expected argumetns
+    expect(log, <Matcher>[
+        isMethodCall(
+          'configureWidget',
+          arguments: <String, Object>{
+            'androidPackageName': 'appname',
+            'widgetId': 1,
+            'itemId': 1,
+            'widgetLayout': 'layoutname',
+            'textViewIdValueMap': {},
+            'stringUid': 'uid'
+          },
+        )
+      ]);
+  });
+```
+
 #### References
 - [Android developers - App Widgets](https://developer.android.com/develop/ui/views/appwidgets)
 - [Android developers - Updating widget and creating widget preview](https://developer.android.com/develop/ui/views/appwidgets/advanced)
@@ -412,7 +475,7 @@ Will include a sample using `flutter workmanager` and `AppWidgetProvider`
 ## Checklist
 - [x] Unit Test
 - [x] update documentation to cover api usage
-- [ ] Test example
+- [x] Test example
 - [x] Update example app
 - [ ] Github Action CI
 - [x] Update Screenshot
