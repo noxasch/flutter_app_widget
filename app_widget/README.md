@@ -161,12 +161,11 @@ import io.flutter.embedding.engine.FlutterEngine
 import tech.noxasch.app_widget.AppWidgetPlugin
 
 class MainActivity: FlutterActivity() {
-  override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-    super.configureFlutterEngine(flutterEngine)
+  override fun onFlutterUiDisplayed() {
+    super.onFlutterUiDisplayed()
 
-    // Add this block
     if (intent.action == AppWidgetManager.ACTION_APPWIDGET_CONFIGURE) {
-      AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
+        AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
     }
   }
 }
@@ -191,18 +190,12 @@ await appWidgetPlugin.configureWidget(...)
 ```dart
 // @pragma('vm:entry-point') anonnotate is to indicate thate the method may be invoked directly from native
 // More info: https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md
-// this method can be declare as a top level function or inside a widget
+// this method can be declare as a top level function or inside a widget as a member function
 @pragma('vm:entry-point')
 void onConfigureWidget(int widgetId) async {
   // handle widget configuration
   // eg:
   // redirect or use launchUrl and deeplink redirect to configuration page
-  //
-  // NOTE: if you are handling this using UrlLauncher add some delay before launch the url
-  // this is because there is delay when the app start using ON_CONFIGURE intent
-  // and the flutter engine initialization
-  // add await Future.delayed(Duration(milliseconds: 300))
-  // otherwise use Navigator to open the ConfigurationScreen
 }
 
 // onConfigureWidget callback are optional
