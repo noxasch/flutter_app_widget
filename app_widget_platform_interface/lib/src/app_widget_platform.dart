@@ -23,7 +23,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  static const channel = 'tech.noxasch.flutter/app_widget';
+  static const channel = 'tech.noxasch.flutter/app_widget_foreground';
 
   Future<bool?> cancelConfigureWidget() {
     throw UnimplementedError();
