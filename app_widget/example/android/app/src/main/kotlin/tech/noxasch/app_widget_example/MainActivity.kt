@@ -7,11 +7,9 @@ import tech.noxasch.app_widget.AppWidgetPlugin
 
 // this need to be implemented manually
 class MainActivity: FlutterActivity() {
-  override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-    super.configureFlutterEngine(flutterEngine)
+  override fun onFlutterUiDisplayed() {
+    super.onFlutterUiDisplayed()
 
-    if (intent.action == AppWidgetManager.ACTION_APPWIDGET_CONFIGURE) {
-      AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
-    }
+    AppWidgetPlugin.Companion.handleWidgetAction(context, intent)
   }
 }

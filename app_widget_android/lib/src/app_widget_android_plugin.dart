@@ -29,8 +29,8 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
       case onClickWidgetCallback:
         final payload = {
           'widgetId': call.arguments['widgetId'],
-          'itemId': call.arguments['widgetId'],
-          'stringUid': call.arguments['widgetId'],
+          'itemId': call.arguments['itemId'],
+          'stringUid': call.arguments['stringUid'],
         };
         return _onClickWidget?.call(payload);
       default:

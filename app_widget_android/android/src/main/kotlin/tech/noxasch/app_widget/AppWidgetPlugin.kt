@@ -1,46 +1,38 @@
 package tech.noxasch.app_widget
 
 import android.app.Activity
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.widget.RemoteViews
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
 
 
 @Keep
-class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
+class AppWidgetPlugin: FlutterPlugin, ActivityAware,
   PluginRegistry.NewIntentListener {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel: MethodChannel
-  private lateinit var context: Context
 
   private var activity: Activity? = null
+  private var methodCallHandler: AppWidgetMethodCallHandler? = null
 
   /// namespacing constant that need to be access from outside.
   /// similar to android string constant pattern
   companion object {
     @JvmStatic
-    val CHANNEL = "tech.noxasch.flutter/app_widget"
+    val TAG = "APP_WIDGET_PLUGIN"
     @JvmStatic
-    val CONFIGURE_WIDGET_ACTION = "tech.noxasch.flutter.configureWidget"
+    val CHANNEL = "tech.noxasch.flutter/app_widget_foreground"
     @JvmStatic
-    val CLICK_WIDGET_ACTION = "tech.noxasch.flutter.clickWidget"
+    val CONFIGURE_WIDGET_ACTION_CALLBACK = "tech.noxasch.flutter.CONFIGURE_CALLBACK"
+    @JvmStatic
+    val CLICK_WIDGET_ACTION = "tech.noxasch.flutter.CLICK_WIDGET"
+    @JvmStatic
+    val CLICK_WIDGET_ACTION_CALLBACK = "tech.noxasch.flutter.CLICK_CALLBACK"
 
     @JvmStatic
     val EXTRA_APP_ITEM_ID = "appItemId"
@@ -52,227 +44,56 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
     @JvmStatic
     val ON_ClICK_WIDGET_CALLBACK = "onClickWidget"
 
+    // this method rethrow intent with a different name
+    // to pass intent to onNewIntent
+    // calling methodChannel in other method is too early
+    // since they are called before flutter Ui is displayed
     @JvmStatic
-    fun handleConfigureAction(context : Context, intent: Intent) {
-       val extras = intent.extras
-       val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
-       if (widgetId == 0) return
+    fun handleWidgetAction(context: Context, intent: Intent) {
+      Log.d("APP_WIDGET_PLUGIN", "${intent.action}")
+      Log.d("APP_WIDGET_PLUGIN", "${context.javaClass}")
+      when(intent.action) {
+        AppWidgetManager.ACTION_APPWIDGET_CONFIGURE -> handleConfigureAction(context, intent)
+        CLICK_WIDGET_ACTION -> handleOnClickAction(context, intent)
+      }
+    }
 
-       val configIntent = Intent(context, context.javaClass)
-       configIntent.action = CONFIGURE_WIDGET_ACTION
-       configIntent.putExtra("widgetId", widgetId)
-       context.startActivity(configIntent)
-     }
+    @JvmStatic
+    private fun handleOnClickAction(context : Context, intent: Intent) {
+      val clickIntent = Intent(context, context.javaClass)
+      clickIntent.action = CLICK_WIDGET_ACTION_CALLBACK
+
+      clickIntent.putExtras(intent)
+      context.startActivity(clickIntent)
+    }
+
+    @JvmStatic
+    private fun handleConfigureAction(context : Context, intent: Intent) {
+      val extras = intent.extras
+      val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
+      if (widgetId == 0) return
+
+      val configIntent = Intent(context, context.javaClass)
+      configIntent.action = CONFIGURE_WIDGET_ACTION_CALLBACK
+      configIntent.putExtra("widgetId", widgetId)
+      context.startActivity(configIntent)
+    }
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, CHANNEL)
-    channel.setMethodCallHandler(this)
-    context = flutterPluginBinding.applicationContext
-  }
-
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    when (call.method) {
-      "cancelConfigureWidget" -> cancelConfigureWidget(result)
-      "configureWidget" -> configureWidget(call, result)
-      "getWidgetIds" -> getWidgetIds(call, result)
-      "reloadWidgets" -> reloadWidgets(call, result)
-      "updateWidget" -> updateWidget(call, result)
-      "widgetExist" -> widgetExist(call, result)
-      else -> {
-        result.notImplemented()
-      }
-    }
+    methodCallHandler = AppWidgetMethodCallHandler(flutterPluginBinding.applicationContext)
+    methodCallHandler!!.open(flutterPluginBinding.binaryMessenger)
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
-
-  private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: Result) {
-    try {
-      val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
-      val widgetProviderClass = Class.forName("${context.packageName}.$widgetProviderName")
-      val widgetProvider = ComponentName(context, widgetProviderClass)
-      val widgetManager = AppWidgetManager.getInstance(context)
-      val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
-
-      return result.success(widgetIds)
-    } catch (exception: Exception) {
-      return result.error("-2", exception.message, exception)
-    }
-  }
-
-  private fun cancelConfigureWidget(@NonNull result: Result) {
-    return try {
-      activity!!.setResult(Activity.RESULT_CANCELED)
-      result.success(true)
-    } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
-    }
-  }
-
-  private fun widgetExist(@NonNull call: MethodCall, @NonNull result: Result) {
-    val widgetId = call.argument<Int>("widgetId") ?: return result.success(false)
-    return try {
-      val widgetManager = AppWidgetManager.getInstance(context)
-      widgetManager.getAppWidgetInfo(widgetId) ?: return result.success(false)
-
-      result.success(true)
-    } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
-    }
-  }
-
-  /// This should be called when configuring individual widgets
-  private fun configureWidget(@NonNull call: MethodCall, @NonNull result: Result) {
-    try {
-      if (activity == null) return result.error("-2", "Not attached to any activity!", null)
-
-      val androidPackageName = call.argument<String>("androidPackageName")
-        ?: return result.error("-1", "androidPackageName is required!", null)
-      val widgetId = call.argument<Int>("widgetId")
-        ?: return result.error("-1", "widgetId is required!", null)
-      val widgetLayout = call.argument<String>("widgetLayout")
-        ?: return result.error("-1", "widgetLayout is required!", null)
-
-      val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
-      val itemId = call.argument<Int>("itemId")
-      val stringUid = call.argument<String>("stringUid")
-      val activityClass = Class.forName("$androidPackageName.MainActivity")
-      val appWidgetManager = AppWidgetManager.getInstance(context)
-      val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
-      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
-
-      if (textViewIdValueMap != null) {
-        val views : RemoteViews = RemoteViews(context.packageName, widgetLayoutId).apply {
-          for ((key, value) in textViewIdValueMap) {
-            val textViewId: Int =
-              context.resources.getIdentifier(key, "id", context.packageName)
-            if (textViewId == 0) throw Exception("Id $key does not exist!")
-            setTextViewText(textViewId, value)
-            setOnClickPendingIntent(textViewId, pendingIntent)
-          }
-        }
-
-        appWidgetManager.updateAppWidget(widgetId, views)
-      }
-
-      // This is important to confirm the widget
-      // otherwise it's considered cancelled and widget will be removed
-      val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-      activity!!.setResult(Activity.RESULT_OK, resultValue)
-      activity!!.finish()
-      return result.success(true)
-    } catch (exception: Exception) {
-      return result.error("-2", exception.message, exception)
-    }
-  }
-
-  // This should only be called after the widget has been configure for the first time
-  private fun updateWidget(@NonNull call: MethodCall, @NonNull result: Result) {
-    try {
-      val androidPackageName = call.argument<String>("androidPackageName")
-        ?: return result.error("-1", "androidPackageName is required!", null)
-      val widgetId = call.argument<Int>("widgetId")
-        ?: return result.error("-1", "widgetId is required!", null)
-      val widgetLayout = call.argument<String>("widgetLayout")
-        ?: return result.error("-1", "widgetLayout is required!", null)
-
-      val widgetLayoutId: Int =
-        context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
-      val itemId = call.argument<Int>("itemId")
-      val stringUid = call.argument<String>("stringUid")
-      val activityClass = Class.forName("$androidPackageName.MainActivity")
-      val appWidgetManager = AppWidgetManager.getInstance(context)
-      val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
-      val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
-
-      if (textViewIdValueMap != null) {
-        val views = RemoteViews(context.packageName, widgetLayoutId)
-
-        for ((key, value) in textViewIdValueMap) {
-          val textViewId: Int =
-            context.resources.getIdentifier(key, "id", context.packageName)
-          if (textViewId == 0) throw Exception("Id $key does not exist!")
-
-          // only work if widget is blank - so we have to clear it first
-          views.setTextViewText(textViewId, "")
-          appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
-          views.setTextViewText(textViewId, value)
-          appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
-          views.setOnClickPendingIntent(textViewId, pendingIntent)
-          appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
-        }
-      }
-
-      return result.success(true)
-    } catch (exception: Exception) {
-      return result.error("-2", exception.message, exception)
-    }
-  }
-
-  /// Create click intent on a widget
-  ///
-  /// when clicked the intent will received by the broadcast AppWidgetBroadcastReceiver
-  /// the receiver will expose the click event to dart callback
-  ///
-  /// by default will use widgetId as requestCode to make sure the intent doesn't replace existing
-  /// widget intent.
-  /// The callback will return widgetId, itemId (if supplied) and stringUid (if supplied)
-  /// This parameters can be use on app side to easily fetch the data from database or API
-  /// without storing in sharedPrefs.
-  ///
-  /// TODO: support deeplinking
-  ///
-  private fun createPendingClickIntent(
-    activityClass: Class<*>,
-    widgetId: Int,
-    itemId: Int?,
-    stringUid: String?
-  ): PendingIntent {
-    val intent = Intent(context, activityClass)
-    intent.action = CLICK_WIDGET_ACTION
-    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-    intent.putExtra(EXTRA_APP_ITEM_ID, itemId)
-    intent.putExtra(EXTRA_APP_STRING_UID, stringUid)
-
-    var pendingIntentFlag = PendingIntent.FLAG_UPDATE_CURRENT
-    if (Build.VERSION.SDK_INT >= 23) {
-      pendingIntentFlag = PendingIntent.FLAG_IMMUTABLE or pendingIntentFlag
-    }
-
-    return PendingIntent.getActivity(context, 0, intent, pendingIntentFlag)
-  }
-
-  /// force reload the widget and this will trigger onUpdate in broadcast receiver
-  private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: Result) {
-    val widgetProviderName = call.argument<String>("androidProviderName")
-        ?: return result.error(
-          "-1",
-          "widgetProviderName is required!",
-          null
-        )
-
-    return try {
-      val widgetClass = Class.forName("${context.packageName}.$widgetProviderName")
-      val widgetProvider = ComponentName(context, widgetClass)
-      val widgetManager = AppWidgetManager.getInstance(context)
-      val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
-
-      val reloadIntent = Intent()
-      reloadIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-      reloadIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds)
-      context.sendBroadcast(reloadIntent)
-      result.success(true)
-    } catch (exception: Exception) {
-      result.error("-2", exception.message, exception)
-    }
+    methodCallHandler!!.close()
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     activity = binding.activity
     binding.addOnNewIntentListener(this)
+    methodCallHandler!!.setActivity(activity)
+    Log.d(TAG, "onAttachedToActivity")
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -282,44 +103,24 @@ class AppWidgetPlugin: FlutterPlugin, MethodCallHandler, ActivityAware,
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
     activity = binding.activity
     binding.addOnNewIntentListener(this)
+    Log.d(TAG, "onReattachedToActivityForConfigChanges")
   }
 
   override fun onDetachedFromActivity() {
     activity = null
   }
 
-  // This will filter event and invoke appropriate callback on Dart side
-  // - onConfigureWidget
-  // - onWidgetClick
+  // this only called when the activity already started
+  // we need to rethrow the intent here since we don't have access to onUiDisplayed
   override fun onNewIntent(intent: Intent): Boolean {
+    Log.d(TAG, "onNewIntent: ${intent.action}")
     if (intent.action != null) {
       when (intent.action) {
-        CONFIGURE_WIDGET_ACTION -> handleConfigureIntent(intent)
-        CLICK_WIDGET_ACTION -> handleClickIntent(intent)
+        CONFIGURE_WIDGET_ACTION_CALLBACK -> methodCallHandler!!.handleConfigureIntent(intent)
+        CLICK_WIDGET_ACTION_CALLBACK -> methodCallHandler!!.handleClickIntent(intent)
       }
     }
 
     return false
-  }
-
-  private fun handleConfigureIntent(intent: Intent): Boolean {
-    val widgetId = intent.extras!!.getInt("widgetId")
-    channel.invokeMethod(ON_CONFIGURE_WIDGET_CALLBACK, mapOf("widgetId" to widgetId))
-    return true
-  }
-
-  private fun handleClickIntent(intent: Intent): Boolean {
-    val widgetId = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)
-    val itemId = intent.extras?.getInt(EXTRA_APP_ITEM_ID)
-    val stringUid = intent.extras?.getInt(EXTRA_APP_STRING_UID)
-
-    val payload = mapOf(
-      "widgetId" to widgetId,
-      "itemId" to itemId,
-      "stringUid" to stringUid,
-    )
-
-    channel.invokeMethod(ON_ClICK_WIDGET_CALLBACK, payload)
-    return true
   }
 }
