@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _appWidgetPlugin = AppWidgetPlugin(
+      // androidPackageName: 'tech.noxasch.app_widget_example',
       onConfigureWidget: onConfigureWidget,
       onClickWidget: onClickWidget,
     );
@@ -121,10 +122,9 @@ class UpdateWidgetButton extends StatelessWidget {
 
           // send configure
           await _appWidgetPlugin.updateWidget(
-              androidPackageName: 'tech.noxasch.app_widget_example',
               widgetId: widgetId,
               widgetLayout: 'example_layout',
-              textViewIdValueMap: {
+              textViews: {
                 'widget_title': 'App Widget',
                 'widget_message': 'Updated in flutter'
               });
@@ -252,10 +252,9 @@ class ConfigureButton extends StatelessWidget {
 
             // send configure
             await _appWidgetPlugin.configureWidget(
-                androidPackageName: 'tech.noxasch.app_widget_example',
                 widgetId: _widgetId!,
                 widgetLayout: 'example_layout',
-                textViewIdValueMap: {
+                textViews: {
                   'widget_title': 'App Widget',
                   'widget_message': 'Configured in flutter'
                 });

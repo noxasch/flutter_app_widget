@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 
 /// Instantiate plugin instance and register callback optional callback
 ///
+/// Accept an optional [androidPackageName] string which use to properly works for flavor that have different package name
+/// than the packageName for MainActivity  <br>
 /// Accept [onConfigureWidget] callback method - optional <br>
 /// Accept [onClickWidget] callback method - optional <br>
 ///
@@ -19,12 +21,15 @@ import 'package:flutter/foundation.dart';
 ///
 class AppWidgetPlugin {
   factory AppWidgetPlugin({
+    String? androidPackageName,
+
     /// callback function when the widget is first created
     void Function(int widgetId)? onConfigureWidget,
     void Function(Map<String, dynamic> payload)? onClickWidget,
   }) {
     if (instance != null) return instance!;
     instance = AppWidgetPlugin._(
+      androidPackageName: androidPackageName,
       onConfigureWidget: onConfigureWidget,
       onClickWidget: onClickWidget,
     );
@@ -33,10 +38,12 @@ class AppWidgetPlugin {
   }
 
   AppWidgetPlugin._({
+    required String? androidPackageName,
     required void Function(int widgetId)? onConfigureWidget,
     required void Function(Map<String, dynamic> payload)? onClickWidget,
   })  : _onConfigureWidget = onConfigureWidget,
-        _onClickWidget = onClickWidget {
+        _onClickWidget = onClickWidget,
+        _androidPackageName = androidPackageName {
     if (kIsWeb) {
       return;
     }
@@ -51,6 +58,8 @@ class AppWidgetPlugin {
   }
 
   static AppWidgetPlugin? instance;
+
+  final String? _androidPackageName;
 
   /// callback function when the widget is first created
   final void Function(int widgetId)? _onConfigureWidget;
@@ -77,7 +86,7 @@ class AppWidgetPlugin {
   ///
   /// Get the [WidgetId] from [onConfigureWidget] callback.
   ///
-  /// [textViewIdValueMap] is the id defined in layout `<TextView android:id="@+id/widget_title"`
+  /// [textViews] is the id defined in layout `<TextView android:id="@+id/widget_title"`
   ///
   /// ```dart
   /// {
@@ -90,20 +99,19 @@ class AppWidgetPlugin {
   /// in onClickWidget callback.
   ///
   Future<bool?> configureWidget({
-    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews = const {},
+    String? payload,
+    String? url,
   }) async {
     return AppWidgetPlatform.instance.configureWidget(
-      androidPackageName: androidPackageName,
+      androidPackageName: _androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
-      textViewIdValueMap: textViewIdValueMap,
-      itemId: itemId,
-      stringUid: stringUid,
+      textViews: textViews,
+      payload: payload,
+      url: url,
     );
   }
 
@@ -113,9 +121,13 @@ class AppWidgetPlugin {
   /// [androidProviderName] is the provider class name which also it's filename <br>
   /// eg: `AppWidgetExampleProvider`
   ///
-  Future<List<int>?> getWidgetIds({required String androidProviderName}) {
-    return AppWidgetPlatform.instance
-        .getWidgetIds(androidProviderName: androidProviderName);
+  Future<List<int>?> getWidgetIds({
+    required String androidProviderName,
+  }) {
+    return AppWidgetPlatform.instance.getWidgetIds(
+      androidPackageName: _androidPackageName,
+      androidProviderName: androidProviderName,
+    );
   }
 
   /// Force reload all widgets
@@ -131,8 +143,10 @@ class AppWidgetPlugin {
   ///
   Future<bool?> reloadWidgets({
     String? androidProviderName,
+    String? androidPackageName,
   }) async {
     return AppWidgetPlatform.instance.reloadWidgets(
+      androidPackageName: androidPackageName,
       androidProviderName: androidProviderName,
     );
   }
@@ -147,7 +161,7 @@ class AppWidgetPlugin {
   /// Get the [WidgetId] from [onConfigureWidget] callback when the widget
   /// is created for the first time.
   ///
-  /// [textViewIdValueMap] is the id defined in layout `<TextView android:id="@+id/widget_title"`
+  /// [textViews] is the id defined in layout `<TextView android:id="@+id/widget_title"`
   ///
   /// ```dart
   /// {
@@ -160,20 +174,19 @@ class AppWidgetPlugin {
   /// in onClickWidget callback.
   ///
   Future<bool?> updateWidget({
-    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews = const {},
+    String? payload,
+    String? url,
   }) async {
     return AppWidgetPlatform.instance.updateWidget(
-      androidPackageName: androidPackageName,
+      androidPackageName: _androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
-      textViewIdValueMap: textViewIdValueMap,
-      itemId: itemId,
-      stringUid: stringUid,
+      textViews: textViews,
+      payload: payload,
+      url: url,
     );
   }
 

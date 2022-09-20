@@ -35,14 +35,15 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews,
+    String? payload,
+    String? url,
   }) async {
     throw UnimplementedError();
   }
 
   Future<bool?> reloadWidgets({
+    String? androidPackageName,
     String? androidProviderName,
   }) async {
     throw UnimplementedError();
@@ -52,16 +53,19 @@ abstract class AppWidgetPlatform extends PlatformInterface {
     String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews,
+    String? payload,
+    String? url,
   }) async {
     throw UnimplementedError();
   }
 
   /// get all widgets ids associated with the given provider
   /// will throw an error if the provider doesn't exist
-  Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
+  Future<List<int>?> getWidgetIds({
+    String? androidPackageName,
+    String? androidProviderName,
+  }) async {
     throw UnimplementedError();
   }
 

@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
@@ -76,17 +77,19 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     }
 
     private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        try {
+        return try {
+            val androidPackageName = call.argument<String>("androidPackageName")
+                ?: context.packageName
+            Log.d("APP_WIDGET_PLUGIN", "getWidgetIds: $androidPackageName")
             val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
-            // TODO: wrong context - require context from user to support flavor
-            val widgetProviderClass = Class.forName("${context.packageName}.$widgetProviderName")
+            val widgetProviderClass = Class.forName("$androidPackageName.$widgetProviderName")
             val widgetProvider = ComponentName(context, widgetProviderClass)
             val widgetManager = AppWidgetManager.getInstance(context)
             val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)
 
-            return result.success(widgetIds)
+            result.success(widgetIds)
         } catch (exception: Exception) {
-            return result.error("-2", exception.message, exception)
+            result.error("-2", exception.message, exception)
         }
     }
 
@@ -103,27 +106,28 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
     /// This should be called when configuring individual widgets
     private fun configureWidget(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        try {
+        return try {
             if (activity == null) return result.error("-2", "Not attached to any activity!", null)
 
             val androidPackageName = call.argument<String>("androidPackageName")
-                ?: return result.error("-1", "androidPackageName is required!", null)
+                ?:  context.packageName
+            Log.d("APP_WIDGET_PLUGIN", "configureWidget: $androidPackageName")
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
             val widgetLayout = call.argument<String>("widgetLayout")
                 ?: return result.error("-1", "widgetLayout is required!", null)
 
             val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
-            val itemId = call.argument<Int>("itemId")
-            val stringUid = call.argument<String>("stringUid")
+            val payload = call.argument<String>("payload")
+            val url = call.argument<String>("url")
             val activityClass = Class.forName("$androidPackageName.MainActivity")
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
-            val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
+            val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, url)
+            val textViewsMap = call.argument<Map<String, String>>("textViews")
 
-            if (textViewIdValueMap != null) {
+            if (textViewsMap != null) {
                 val views : RemoteViews = RemoteViews(context.packageName, widgetLayoutId).apply {
-                    for ((key, value) in textViewIdValueMap) {
+                    for ((key, value) in textViewsMap) {
                         val textViewId: Int =
                             context.resources.getIdentifier(key, "id", context.packageName)
                         if (textViewId == 0) throw Exception("Id $key does not exist!")
@@ -140,9 +144,9 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
             activity!!.setResult(Activity.RESULT_OK, resultValue)
             activity!!.finish()
-            return result.success(true)
+            result.success(true)
         } catch (exception: Exception) {
-            return result.error("-2", exception.message, exception)
+            result.error("-2", exception.message, exception)
         }
     }
 
@@ -160,9 +164,10 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
     // This should only be called after the widget has been configure for the first time
     private fun updateWidget(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        try {
+        return try {
             val androidPackageName = call.argument<String>("androidPackageName")
-                ?: return result.error("-1", "androidPackageName is required!", null)
+                ?: context.packageName
+            Log.d("APP_WIDGET_PLUGIN", "updateWidget: $androidPackageName")
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
             val widgetLayout = call.argument<String>("widgetLayout")
@@ -170,17 +175,17 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
             val widgetLayoutId: Int =
                 context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
-            val itemId = call.argument<Int>("itemId")
-            val stringUid = call.argument<String>("stringUid")
+            val payload = call.argument<String>("payload")
+            val url = call.argument<String>("url")
             val activityClass = Class.forName("$androidPackageName.MainActivity")
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val pendingIntent = createPendingClickIntent(activityClass, widgetId, itemId, stringUid)
-            val textViewIdValueMap = call.argument<Map<String, String>>("textViewIdValueMap")
+            val pendingIntent = createPendingClickIntent(activityClass, widgetId, payload, url)
+            val textViewsMap = call.argument<Map<String, String>>("textViews")
 
-            if (textViewIdValueMap != null) {
+            if (textViewsMap != null) {
                 val views = RemoteViews(context.packageName, widgetLayoutId)
 
-                for ((key, value) in textViewIdValueMap) {
+                for ((key, value) in textViewsMap) {
                     val textViewId: Int =
                         context.resources.getIdentifier(key, "id", context.packageName)
                     if (textViewId == 0) throw Exception("Id $key does not exist!")
@@ -195,9 +200,9 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                 }
             }
 
-            return result.success(true)
+            result.success(true)
         } catch (exception: Exception) {
-            return result.error("-2", exception.message, exception)
+            result.error("-2", exception.message, exception)
         }
     }
 
@@ -212,21 +217,19 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     /// This parameters can be use on app side to easily fetch the data from database or API
     /// without storing in sharedPrefs.
     ///
-    /// TODO: support deeplinking
     ///
     private fun createPendingClickIntent(
         activityClass: Class<*>,
         widgetId: Int,
-        itemId: Int?,
-        stringUid: String?
+        payload: String?,
+        url: String?
     ): PendingIntent {
         val clickIntent = Intent(context, activityClass)
         clickIntent.action = AppWidgetPlugin.CLICK_WIDGET_ACTION
         clickIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-        clickIntent.putExtra(AppWidgetPlugin.EXTRA_APP_ITEM_ID, itemId)
-        clickIntent.putExtra(AppWidgetPlugin.EXTRA_APP_STRING_UID, stringUid)
-
+        clickIntent.putExtra(AppWidgetPlugin.EXTRA_PAYLOAD, payload)
+        if (url != null) clickIntent.data = (Uri.parse(url))
 
         var pendingIntentFlag = PendingIntent.FLAG_UPDATE_CURRENT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -238,6 +241,9 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
     /// force reload the widget and this will trigger onUpdate in broadcast receiver
     private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+        val androidPackageName = call.argument<String>("androidPackageName")
+            ?:  context.packageName
+        Log.d("APP_WIDGET_PLUGIN", "reloadWidgets: $androidPackageName")
         val widgetProviderName = call.argument<String>("androidProviderName")
             ?: return result.error(
                 "-1",
@@ -246,8 +252,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             )
 
         return try {
-            // TODO: wrong context - require context from user to support flavor
-            val widgetClass = Class.forName("${context.packageName}.$widgetProviderName")
+            val widgetClass = Class.forName("$androidPackageName.$widgetProviderName")
             val widgetProvider = ComponentName(context, widgetClass)
             val widgetManager = AppWidgetManager.getInstance(context)
             val widgetIds = widgetManager.getAppWidgetIds(widgetProvider)

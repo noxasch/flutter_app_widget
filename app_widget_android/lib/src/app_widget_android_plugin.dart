@@ -48,14 +48,10 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews = const {},
+    String? payload,
+    String? url,
   }) {
-    assert(
-      androidPackageName != null,
-      'androidPackageName is required for android!',
-    );
     assert(widgetId != null, 'widgetId is required for android!');
     assert(widgetLayout != null, 'widgetLayout is required for android!');
 
@@ -63,14 +59,17 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
       'androidPackageName': androidPackageName,
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
-      'textViewIdValueMap': textViewIdValueMap,
-      'itemId': itemId,
-      'stringUid': stringUid,
+      'textViews': textViews,
+      'payload': payload,
+      'url': url,
     });
   }
 
   @override
-  Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
+  Future<List<int>?> getWidgetIds({
+    String? androidPackageName,
+    String? androidProviderName,
+  }) async {
     assert(
       androidProviderName != null,
       'androidProviderName is required for android!',
@@ -86,8 +85,14 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
   @override
   Future<bool?> reloadWidgets({
+    String? androidPackageName,
     String? androidProviderName,
   }) {
+    assert(
+      androidProviderName != null,
+      'androidProviderName is required for android!',
+    );
+
     return _methodChannel.invokeMethod<bool>(
       'reloadWidgets',
       {'androidProviderName': androidProviderName},
@@ -99,14 +104,10 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews = const {},
+    String? payload,
+    String? url,
   }) {
-    assert(
-      androidPackageName != null,
-      'androidPackageName is required for android!',
-    );
     assert(widgetId != null, 'widgetId is required for android!');
     assert(widgetLayout != null, 'widgetLayout is required for android!');
 
@@ -114,9 +115,9 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
       'androidPackageName': androidPackageName,
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
-      'textViewIdValueMap': textViewIdValueMap,
-      'itemId': itemId,
-      'stringUid': stringUid,
+      'textViews': textViews,
+      'payload': payload,
+      'url': url,
     });
   }
 

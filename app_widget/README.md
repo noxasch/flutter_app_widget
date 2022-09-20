@@ -181,7 +181,11 @@ This section shows how to use the exposed api by the plugin in your app.
 
 ```dart
 // instantiate appWidgetPlugin
-final appWidgetPlugin = AppWidgetPlugin();
+// recommended to include your app package name for android
+// this help to resolves flavored version of the app
+final appWidgetPlugin = AppWidgetPlugin(
+  androidPackageName: 'tech.noxasch.app_widget_example',
+);
 await appWidgetPlugin.configureWidget(...)
 ```
 
@@ -209,13 +213,15 @@ final appWidgetPlugin = AppWidgetPlugin(
 // it method will close the app which require to signal the widget config completion
 await appWidgetPlugin.configureWidget(
    // change to androidPackageName - we needed as param since there is no standard on how long the domain name can be
-  androidPackageName: 'tech.noxasch.app_widget_example',
   widgetId: _widgetId!,
   widgetLayout: 'example_layout',
-  textViewIdValueMap: {
+  textViews: {
     'widget_title': 'MY WIDGET',
     'widget_message': 'This is my widget message'
-});
+  },
+  payload: '{"itemId": 1, "stringUid": "uid"}',
+  url: 'deeplink or url'
+);
 ```
 #### Cancelling
 Call this method to properly cancel widget first time configuration
@@ -251,13 +257,15 @@ how to use the plugin in workmanager.
 
 ```dart
 await appWidgetPlugin.updateWidget(
-  androidPackageName: 'tech.noxasch.app_widget_example',
   widgetId: _widgetId!,
   widgetLayout: 'example_layout',
-  textViewIdValueMap: {
+  textViews: {
     'widget_title': 'MY WIDGET',
     'widget_message': 'This is my widget message'
-});
+  },
+  payload: '{"itemId": 1, "stringUid": "uid"}',
+  url: 'deeplink or url'
+);
 ```
 
 #### reloadWidgets
@@ -344,6 +352,7 @@ void callbackDipatcher() async {
 Future<void> updateWidgetWorker() async {
   final sharedPrefs = await SharedPreferences.getInstance();
   final appWidgetPlugin = AppWidgetPlugin(
+    androidPackageName: 'tech.noxasch.app_widget_example',
     onConfigureWidget: onConfigureWidget,
   );
 
@@ -356,10 +365,9 @@ Future<void> updateWidgetWorker() async {
 
   if (widgetId != null) {
     await appWidgetPlugin.updateWidget(
-      androidPackageName: 'tech.noxasch.app_widget_example',
       widgetId: _widgetId!,
       widgetLayout: 'example_layout',
-      textViewIdValueMap: {
+      textViews: {
         'widget_title': 'MY WIDGET',
         'widget_message': 'This is my widget message'
     });
@@ -458,10 +466,9 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname',
             'widgetId': 1,
-            'itemId': 1,
             'widgetLayout': 'layoutname',
-            'textViewIdValueMap': {},
-            'stringUid': 'uid'
+            'textViews': {},
+            'payload': '{"itemId": 1, "stringUid": "uid"}'
           },
         )
       ]);

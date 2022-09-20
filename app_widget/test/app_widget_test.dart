@@ -46,16 +46,16 @@ void main() {
     });
 
     test('configureWidget', () async {
-      final appWidgetPlugin = AppWidgetPlugin();
+      final appWidgetPlugin = AppWidgetPlugin(
+        androidPackageName: 'appname',
+      );
 
       expect(
         appWidgetPlugin.configureWidget(
-          androidPackageName: 'appname',
           widgetId: 1,
-          itemId: 1,
           widgetLayout: 'layoutname',
-          textViewIdValueMap: {},
-          stringUid: 'uid',
+          payload: '{"itemId": 1, "stringUid": "uid"}',
+          url: 'https://google.come',
         ),
         completion(true),
       );
@@ -66,26 +66,26 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname',
             'widgetId': 1,
-            'itemId': 1,
             'widgetLayout': 'layoutname',
-            'textViewIdValueMap': {},
-            'stringUid': 'uid'
+            'textViews': {},
+            'payload': '{"itemId": 1, "stringUid": "uid"}',
+            'url': 'https://google.come',
           },
         )
       ]);
     });
 
     test('updateWidget', () async {
-      final appWidgetPlugin = AppWidgetPlugin();
+      final appWidgetPlugin = AppWidgetPlugin(
+        androidPackageName: 'appname',
+      );
 
       expect(
         appWidgetPlugin.updateWidget(
-          androidPackageName: 'appname',
           widgetId: 1,
-          itemId: 1,
           widgetLayout: 'layoutname',
-          textViewIdValueMap: {},
-          stringUid: 'uid',
+          payload: '{"itemId": 1, "stringUid": "uid"}',
+          url: 'https://google.come',
         ),
         completion(true),
       );
@@ -96,17 +96,19 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname',
             'widgetId': 1,
-            'itemId': 1,
             'widgetLayout': 'layoutname',
-            'textViewIdValueMap': {},
-            'stringUid': 'uid'
+            'textViews': {},
+            'payload': '{"itemId": 1, "stringUid": "uid"}',
+            'url': 'https://google.come',
           },
         )
       ]);
     });
 
     test('cancelConfigureWidget', () async {
-      final appWidgetPlugin = AppWidgetPlugin();
+      final appWidgetPlugin = AppWidgetPlugin(
+        androidPackageName: 'appname',
+      );
 
       expect(
         appWidgetPlugin.cancelConfigureWidget(),

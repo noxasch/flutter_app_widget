@@ -35,6 +35,8 @@ class AppWidgetPlugin: FlutterPlugin, ActivityAware,
     val CLICK_WIDGET_ACTION_CALLBACK = "tech.noxasch.flutter.CLICK_CALLBACK"
 
     @JvmStatic
+    val EXTRA_PAYLOAD = "dataPayload"
+    @JvmStatic
     val EXTRA_APP_ITEM_ID = "appItemId"
     @JvmStatic
     val EXTRA_APP_STRING_UID = "appStringUid"
@@ -50,8 +52,6 @@ class AppWidgetPlugin: FlutterPlugin, ActivityAware,
     // since they are called before flutter Ui is displayed
     @JvmStatic
     fun handleWidgetAction(context: Context, intent: Intent) {
-      Log.d("APP_WIDGET_PLUGIN", "${intent.action}")
-      Log.d("APP_WIDGET_PLUGIN", "${context.javaClass}")
       when(intent.action) {
         AppWidgetManager.ACTION_APPWIDGET_CONFIGURE -> handleConfigureAction(context, intent)
         CLICK_WIDGET_ACTION -> handleOnClickAction(context, intent)

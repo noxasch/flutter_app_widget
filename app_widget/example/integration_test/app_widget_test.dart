@@ -7,21 +7,37 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('configureWidget', (tester) async {
-    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin(
+      androidPackageName: 'tech.noxasch.app_widget_example',
+    );
 
     final res = await appWidgetPlugin.configureWidget(
-      androidPackageName: 'tech.noxasch.app_widget_example',
       widgetId: 1,
       widgetLayout: 'example_layout',
-      itemId: 1,
-      stringUid: 'uid',
-      textViewIdValueMap: {'widget_title': 'my title'},
+      payload: '{"itemId": 1, "stringUid": "uid"}',
+      url: 'https://google.come',
+    );
+    expect(res, isTrue);
+  });
+
+  testWidgets('configureWidget without packageName', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin(
+      androidPackageName: 'tech.noxasch.app_widget_example',
+    );
+
+    final res = await appWidgetPlugin.configureWidget(
+      widgetId: 1,
+      widgetLayout: 'example_layout',
+      payload: '{"itemId": 1, "stringUid": "uid"}',
+      url: 'https://google.come',
     );
     expect(res, isTrue);
   });
 
   testWidgets('cancelConfigureWidget', (tester) async {
-    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin(
+      androidPackageName: 'tech.noxasch.app_widget_example',
+    );
 
     final res = await appWidgetPlugin.cancelConfigureWidget();
 
@@ -29,6 +45,17 @@ void main() {
   });
 
   testWidgets('getWidgetIds', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin(
+      androidPackageName: 'tech.noxasch.app_widget_example',
+    );
+
+    final res = await appWidgetPlugin.getWidgetIds(
+        androidProviderName: 'AppWidgetExampleProvider');
+
+    expect(res, []);
+  });
+
+  testWidgets('getWidgetIds without packageName', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
     final res = await appWidgetPlugin.getWidgetIds(
@@ -37,22 +64,7 @@ void main() {
     expect(res, []);
   });
 
-  testWidgets('updateWidget', (tester) async {
-    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
-
-    final res = await appWidgetPlugin.updateWidget(
-      androidPackageName: 'tech.noxasch.app_widget_example',
-      widgetId: 1,
-      widgetLayout: 'example_layout',
-      itemId: 1,
-      stringUid: 'uid',
-      textViewIdValueMap: {'widget_title': 'my title'},
-    );
-
-    expect(res, isTrue);
-  });
-
-  testWidgets('reloadWidgets throw expected error', (tester) async {
+  testWidgets('reloadWidgets', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
 
     final res = await appWidgetPlugin.reloadWidgets(
@@ -61,8 +73,40 @@ void main() {
     expect(res, isTrue);
   });
 
-  testWidgets('widgetExist', (tester) async {
+  testWidgets('updateWidget', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin(
+      androidPackageName: 'tech.noxasch.app_widget_example',
+    );
+
+    final res = await appWidgetPlugin.updateWidget(
+      widgetId: 1,
+      widgetLayout: 'example_layout',
+      payload: '{"itemId": 1, "stringUid": "uid"}',
+      url: 'https://google.come',
+      textViews: {'widget_title': 'my title'},
+    );
+
+    expect(res, isTrue);
+  });
+
+  testWidgets('updateWidget without packageName', (tester) async {
     final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin();
+
+    final res = await appWidgetPlugin.updateWidget(
+      widgetId: 1,
+      widgetLayout: 'example_layout',
+      payload: '{"itemId": 1, "stringUid": "uid"}',
+      url: 'https://google.come',
+      textViews: {'widget_title': 'my title'},
+    );
+
+    expect(res, isTrue);
+  });
+
+  testWidgets('widgetExist', (tester) async {
+    final AppWidgetPlugin appWidgetPlugin = AppWidgetPlugin(
+      androidPackageName: 'tech.noxasch.app_widget_example',
+    );
 
     final res = await appWidgetPlugin.widgetExist(12);
 

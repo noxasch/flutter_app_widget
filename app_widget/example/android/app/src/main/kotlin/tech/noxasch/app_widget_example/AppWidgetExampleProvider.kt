@@ -19,10 +19,10 @@ class AppWidgetExampleProvider : AppWidgetProvider() {
         appWidgetIds: IntArray?
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-
+        Log.d("APP_WIDGET_PLUGIN", "ON_UPDATE")
         if (appWidgetIds != null) {
             for (widgetId in appWidgetIds) {
-                Log.d("WIDGET_ON_UPDATE ID", "$widgetId")
+                Log.d("APP_WIDGET_PLUGIN", "WIDGET_ID: $widgetId")
             }
         }
 

@@ -78,15 +78,16 @@ class MockAppWidgetAndroidPlatform
     int? widgetId,
     String? widgetLayout,
     String? widgetContainerName,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews,
+    String? payload,
+    String? url,
   }) async {
     return true;
   }
 
   @override
   Future<bool?> reloadWidgets({
+    String? androidPackageName,
     String? androidProviderName,
   }) async {
     return true;
@@ -97,9 +98,9 @@ class MockAppWidgetAndroidPlatform
     String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
-    Map<String, String>? textViewIdValueMap,
-    int? itemId,
-    String? stringUid,
+    Map<String, String>? textViews,
+    String? payload,
+    String? url,
   }) async {
     return true;
   }
@@ -110,7 +111,10 @@ class MockAppWidgetAndroidPlatform
   }
 
   @override
-  Future<List<int>?> getWidgetIds({String? androidProviderName}) async {
+  Future<List<int>?> getWidgetIds({
+    String? androidPackageName,
+    String? androidProviderName,
+  }) async {
     return [42];
   }
 }
