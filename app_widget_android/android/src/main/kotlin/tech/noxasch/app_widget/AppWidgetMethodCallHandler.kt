@@ -78,6 +78,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         try {
             val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
+            // TODO: wrong context - require context from user to support flavor
             val widgetProviderClass = Class.forName("${context.packageName}.$widgetProviderName")
             val widgetProvider = ComponentName(context, widgetProviderClass)
             val widgetManager = AppWidgetManager.getInstance(context)
@@ -220,8 +221,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         stringUid: String?
     ): PendingIntent {
         val clickIntent = Intent(context, activityClass)
-//        Log.d("APP_WIDGET_PLUGIN", "CONTEXT: ${context.packageName}")
-//        Log.d("APP_WIDGET_PLUGIN", "$activityClass")
         clickIntent.action = AppWidgetPlugin.CLICK_WIDGET_ACTION
         clickIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
@@ -247,7 +246,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             )
 
         return try {
-            // wrong context - require context from user to support flavor
+            // TODO: wrong context - require context from user to support flavor
             val widgetClass = Class.forName("${context.packageName}.$widgetProviderName")
             val widgetProvider = ComponentName(context, widgetClass)
             val widgetManager = AppWidgetManager.getInstance(context)
