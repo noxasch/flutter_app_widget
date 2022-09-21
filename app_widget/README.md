@@ -48,8 +48,14 @@ Which by you can handle this in flutter using:
 
 ##### Android Flavor support
 
-As of version 0.1.0, this plugin support flavor and there are
-no special configuration needed.
+simply include main android package name use by the MainActivity without flavor prefix.
+Otherwise just omit the packageName as it will use your default package name.
+
+```dart
+final appWidgetPlugin = AppWidgetPlugin(
+  androidPackageName: 'tech.noxasch.app_widget_example',
+);
+```
 
 ##### Android Setup
 
@@ -464,7 +470,7 @@ void main() {
         isMethodCall(
           'configureWidget',
           arguments: <String, Object>{
-            'androidPackageName': 'appname',
+            'androidPackageName': 'appname', // androidPackageName is included behind the scene
             'widgetId': 1,
             'widgetLayout': 'layoutname',
             'textViews': {},
