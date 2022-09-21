@@ -4,7 +4,6 @@ import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -93,7 +92,6 @@ class AppWidgetPlugin: FlutterPlugin, ActivityAware,
     activity = binding.activity
     binding.addOnNewIntentListener(this)
     methodCallHandler!!.setActivity(activity)
-    Log.d(TAG, "onAttachedToActivity")
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -103,7 +101,6 @@ class AppWidgetPlugin: FlutterPlugin, ActivityAware,
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
     activity = binding.activity
     binding.addOnNewIntentListener(this)
-    Log.d(TAG, "onReattachedToActivityForConfigChanges")
   }
 
   override fun onDetachedFromActivity() {
@@ -113,7 +110,6 @@ class AppWidgetPlugin: FlutterPlugin, ActivityAware,
   // this only called when the activity already started
   // we need to rethrow the intent here since we don't have access to onUiDisplayed
   override fun onNewIntent(intent: Intent): Boolean {
-    Log.d(TAG, "onNewIntent: ${intent.action}")
     if (intent.action != null) {
       when (intent.action) {
         CONFIGURE_WIDGET_ACTION_CALLBACK -> methodCallHandler!!.handleConfigureIntent(intent)

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:app_widget/app_widget.dart';
 
-void onClickWidget(Map<String, dynamic> payload) {
+void onClickWidget(String? payload) {
   print('onClick Widget: $payload');
 }
 

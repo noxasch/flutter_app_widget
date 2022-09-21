@@ -12,14 +12,14 @@ const MethodChannel _methodChannel = MethodChannel(AppWidgetPlatform.channel);
 class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   AppWidgetAndroidPlugin({
     void Function(int widgetId)? onConfigureWidget,
-    void Function(Map<String, dynamic> payload)? onClickWidget,
+    void Function(String? payload)? onClickWidget,
   })  : _onConfigureWidget = onConfigureWidget,
         _onClickWidget = onClickWidget {
     _methodChannel.setMethodCallHandler(handleMethod);
   }
 
   final void Function(int widgetId)? _onConfigureWidget;
-  final void Function(Map<String, dynamic> payload)? _onClickWidget;
+  final void Function(String? payload)? _onClickWidget;
 
   Future<dynamic> handleMethod(MethodCall call) async {
     switch (call.method) {
@@ -27,12 +27,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
         final widgetId = call.arguments['widgetId'] as int;
         return _onConfigureWidget?.call(widgetId);
       case onClickWidgetCallback:
-        final payload = {
-          'widgetId': call.arguments['widgetId'],
-          'itemId': call.arguments['itemId'],
-          'stringUid': call.arguments['stringUid'],
-        };
-        return _onClickWidget?.call(payload);
+        return _onClickWidget?.call(call.arguments['payload'] as String);
       default:
         throw UnimplementedError('Method ${call.method} is not implemented!');
     }

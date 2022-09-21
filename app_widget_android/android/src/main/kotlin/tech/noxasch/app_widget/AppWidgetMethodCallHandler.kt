@@ -45,17 +45,11 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
 
     fun handleClickIntent(intent: Intent): Boolean {
-        val widgetId = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)
-        val itemId = intent.extras?.getInt(AppWidgetPlugin.EXTRA_APP_ITEM_ID)
-        val stringUid = intent.extras?.getString(AppWidgetPlugin.EXTRA_APP_STRING_UID)
+        val payload = intent.extras?.getString(AppWidgetPlugin.EXTRA_PAYLOAD)
 
-        val payload = mapOf(
-            "widgetId" to widgetId,
-            "itemId" to itemId,
-            "stringUid" to stringUid,
-        )
-
-        channel!!.invokeMethod(AppWidgetPlugin.ON_ClICK_WIDGET_CALLBACK, payload)
+        channel!!.invokeMethod(AppWidgetPlugin.ON_ClICK_WIDGET_CALLBACK,  mapOf(
+            "payload" to payload
+        ))
         return true
     }
 
@@ -74,10 +68,15 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     }
 
     private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+        val androidPackageName = call.argument<String>("androidPackageName")
+            ?: context.packageName
+        val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.error(
+            "-1",
+            "widgetProviderName is required!",
+            null
+        )
+
         return try {
-            val androidPackageName = call.argument<String>("androidPackageName")
-                ?: context.packageName
-            val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
             val widgetProviderClass = Class.forName("$androidPackageName.$widgetProviderName")
             val widgetProvider = ComponentName(context, widgetProviderClass)
             val widgetManager = AppWidgetManager.getInstance(context)

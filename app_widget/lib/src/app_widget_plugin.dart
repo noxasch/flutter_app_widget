@@ -25,7 +25,7 @@ class AppWidgetPlugin {
 
     /// callback function when the widget is first created
     void Function(int widgetId)? onConfigureWidget,
-    void Function(Map<String, dynamic> payload)? onClickWidget,
+    void Function(String? payload)? onClickWidget,
   }) {
     if (instance != null) return instance!;
     instance = AppWidgetPlugin._(
@@ -40,7 +40,7 @@ class AppWidgetPlugin {
   AppWidgetPlugin._({
     required String? androidPackageName,
     required void Function(int widgetId)? onConfigureWidget,
-    required void Function(Map<String, dynamic> payload)? onClickWidget,
+    required void Function(String? payload)? onClickWidget,
   })  : _onConfigureWidget = onConfigureWidget,
         _onClickWidget = onClickWidget,
         _androidPackageName = androidPackageName {
@@ -68,7 +68,7 @@ class AppWidgetPlugin {
   /// - itemId
   /// - stringUid
   /// - widgetId
-  final void Function(Map<String, dynamic> payload)? _onClickWidget;
+  final void Function(String? payload)? _onClickWidget;
 
   /// Cancel widget configuration
   ///
