@@ -1,3 +1,13 @@
+## 0.2.0
+
+* rename interface into more generic
+* feat(android): support uri payload for onClick intent
+* fix: onClickWidget callback are now called properly
+
+### Breaking Changes
+- `androidPackageName` are no longer accepted in `configureWidget` and `updateWidget` method
+- `onClickWidget` callback now accept a string instead of Map
+
 ## 0.1.1
 
 * perf: improve configure widget callback response

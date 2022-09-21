@@ -1,6 +1,6 @@
 name: app_widget
 description: Flutter plugin to manage app widget / home screen widget from within flutter app.
-version: 0.1.1
+version: 0.2.0
 homepage: https://noxasch.tech/
 repository: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget
 issue_tracker: https://github.com/noxasch/flutter_app_widget/issues
@@ -13,8 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
-  app_widget_platform_interface: ^0.1.0
-  app_widget_android: ^0.1.1
+  app_widget_platform_interface: ^0.2.0
+  app_widget_android: ^0.2.0
   # app_widget_platform_interface: # local dev
   #   path: ../app_widget_platform_interface
   # app_widget_android: # local dev
