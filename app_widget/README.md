@@ -170,9 +170,7 @@ class MainActivity: FlutterActivity() {
   override fun onFlutterUiDisplayed() {
     super.onFlutterUiDisplayed()
 
-    if (intent.action == AppWidgetManager.ACTION_APPWIDGET_CONFIGURE) {
-        AppWidgetPlugin.Companion.handleConfigureAction(context, intent)
-    }
+    AppWidgetPlugin.Companion.handleWidgetAction(context, intent)
   }
 }
 ```
