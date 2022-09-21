@@ -1,3 +1,9 @@
+## 0.2.0
+
+* breaking changes: `androidAppName` renamed to `androidPackageName`
+* breaking changes: parameter `textViewsIdMap` renamed to `textViews` for `configureWidget` and `updateWidget`
+* feat: androidPackageName are now accepted for reloadWidget and getWidgetIds
+
 
 ## 0.1.0
 
