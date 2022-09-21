@@ -1,3 +1,12 @@
+## 0.2.0
+
+* breaking changes: `androidAppName` renamed to `androidPackageName`
+* breaking changes: parameter `textViewsIdMap` renamed to `textViews` for `configureWidget` and `updateWidget`
+* breaking changes: `onClickWidget` now accept String instead of Map
+* feat: androidPackageName are now accepted for reloadWidget and getWidgetIds
+* feat: accept uri parameters in `configureWidget` and `updatewidget`
+* fix: onClickWidget callback
+
 ## 0.1.1
 
 * perf: improve configure widget callback response
