@@ -54,43 +54,45 @@ class _MyAppState extends State<MyApp> {
           title: const Text('AppWidgetPlugin example app'),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(30.0),
-                child: TextField(
-                  decoration: const InputDecoration(label: Text('Widget Id')),
-                  controller: _controller,
-                  keyboardType: TextInputType.number,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: TextField(
+                    decoration: const InputDecoration(label: Text('Widget Id')),
+                    controller: _controller,
+                    keyboardType: TextInputType.number,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              ConfigureButton(
-                  widgetId: _widgetId, appWidgetPlugin: _appWidgetPlugin),
-              const SizedBox(
-                height: 10,
-              ),
-              WidgetExistButton(
-                controller: _controller,
-                appWidgetPlugin: _appWidgetPlugin,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              ReloadWidgetButton(appWidgetPlugin: _appWidgetPlugin),
-              const SizedBox(
-                height: 10,
-              ),
-              UpdateWidgetButton(
-                  controller: _controller, appWidgetPlugin: _appWidgetPlugin),
-              const SizedBox(
-                height: 10,
-              ),
-              GetWidgetIdsButton(appWidgetPlugin: _appWidgetPlugin),
-            ],
+                const SizedBox(
+                  height: 10,
+                ),
+                ConfigureButton(
+                    widgetId: _widgetId, appWidgetPlugin: _appWidgetPlugin),
+                const SizedBox(
+                  height: 10,
+                ),
+                WidgetExistButton(
+                  controller: _controller,
+                  appWidgetPlugin: _appWidgetPlugin,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                ReloadWidgetButton(appWidgetPlugin: _appWidgetPlugin),
+                const SizedBox(
+                  height: 10,
+                ),
+                UpdateWidgetButton(
+                    controller: _controller, appWidgetPlugin: _appWidgetPlugin),
+                const SizedBox(
+                  height: 10,
+                ),
+                GetWidgetIdsButton(appWidgetPlugin: _appWidgetPlugin),
+              ],
+            ),
           ),
         ),
       ),

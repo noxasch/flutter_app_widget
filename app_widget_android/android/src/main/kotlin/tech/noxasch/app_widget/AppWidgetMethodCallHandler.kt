@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.NonNull
 import io.flutter.plugin.common.BinaryMessenger
@@ -46,11 +45,9 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
 
     fun handleClickIntent(intent: Intent): Boolean {
-//        Log.d("APP_WIDGET_PLUGIN", "handleClickIntent")
         val widgetId = intent.extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID)
         val itemId = intent.extras?.getInt(AppWidgetPlugin.EXTRA_APP_ITEM_ID)
         val stringUid = intent.extras?.getString(AppWidgetPlugin.EXTRA_APP_STRING_UID)
-//        Log.d("APP_WIDGET_PLUGIN", "handleClickIntent $stringUid")
 
         val payload = mapOf(
             "widgetId" to widgetId,
@@ -80,7 +77,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         return try {
             val androidPackageName = call.argument<String>("androidPackageName")
                 ?: context.packageName
-            Log.d("APP_WIDGET_PLUGIN", "getWidgetIds: $androidPackageName")
             val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.success(false)
             val widgetProviderClass = Class.forName("$androidPackageName.$widgetProviderName")
             val widgetProvider = ComponentName(context, widgetProviderClass)
@@ -111,7 +107,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
             val androidPackageName = call.argument<String>("androidPackageName")
                 ?:  context.packageName
-            Log.d("APP_WIDGET_PLUGIN", "configureWidget: $androidPackageName")
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
             val widgetLayout = call.argument<String>("widgetLayout")
@@ -167,7 +162,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         return try {
             val androidPackageName = call.argument<String>("androidPackageName")
                 ?: context.packageName
-            Log.d("APP_WIDGET_PLUGIN", "updateWidget: $androidPackageName")
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
             val widgetLayout = call.argument<String>("widgetLayout")
@@ -243,7 +237,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         val androidPackageName = call.argument<String>("androidPackageName")
             ?:  context.packageName
-        Log.d("APP_WIDGET_PLUGIN", "reloadWidgets: $androidPackageName")
         val widgetProviderName = call.argument<String>("androidProviderName")
             ?: return result.error(
                 "-1",
