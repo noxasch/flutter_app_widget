@@ -235,7 +235,7 @@ await appWidgetPlugin.cancelConfigure()
 ```dart
 // this method can be declare as a top level function or inside a widget
 @pragma('vm:entry-point')
-void onClickWidget(int widgetId) {
+void onClickWidget(String? payload) {
   // handle click widget event
   // eg:
   // redirect to item page
