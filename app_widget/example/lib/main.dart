@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:app_widget/app_widget.dart';
@@ -124,12 +127,14 @@ class UpdateWidgetButton extends StatelessWidget {
 
           // send configure
           await _appWidgetPlugin.updateWidget(
-              widgetId: widgetId,
-              widgetLayout: 'example_layout',
-              textViews: {
-                'widget_title': 'App Widget',
-                'widget_message': 'Updated in flutter'
-              });
+            widgetId: widgetId,
+            widgetLayout: 'example_layout',
+            textViews: {
+              'widget_title': 'App Widget',
+              'widget_message': 'Updated in flutter'
+            },
+            payload: jsonEncode({'number': Random.secure().nextInt(10)}),
+          );
         }
       },
       child: const Text('Update Widget'),
@@ -254,12 +259,14 @@ class ConfigureButton extends StatelessWidget {
 
             // send configure
             await _appWidgetPlugin.configureWidget(
-                widgetId: _widgetId!,
-                widgetLayout: 'example_layout',
-                textViews: {
-                  'widget_title': 'App Widget',
-                  'widget_message': 'Configured in flutter'
-                });
+              widgetId: _widgetId!,
+              widgetLayout: 'example_layout',
+              textViews: {
+                'widget_title': 'App Widget',
+                'widget_message': 'Configured in flutter'
+              },
+              payload: jsonEncode({'number': Random().nextInt(10)}),
+            );
             messenger.showSnackBar(
                 const SnackBar(content: Text('Widget has been configured!')));
           } else {

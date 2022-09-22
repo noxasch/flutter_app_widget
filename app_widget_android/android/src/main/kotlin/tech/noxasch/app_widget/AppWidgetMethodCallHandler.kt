@@ -229,7 +229,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             pendingIntentFlag =  pendingIntentFlag or PendingIntent.FLAG_IMMUTABLE
         }
 
-        return PendingIntent.getActivity(context, 0, clickIntent, pendingIntentFlag)
+        return PendingIntent.getActivity(context, widgetId, clickIntent, pendingIntentFlag)
     }
 
     /// force reload the widget and this will trigger onUpdate in broadcast receiver

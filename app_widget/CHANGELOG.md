@@ -1,3 +1,7 @@
+## 0.2.1
+
+* fix(android): onClickWidget callback should be independent on each widget
+
 ## 0.2.0
 
 * rename interface into more generic
