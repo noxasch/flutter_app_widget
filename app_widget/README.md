@@ -1,12 +1,25 @@
 # App Widget
 
+[![platform-interface](https://github.com/noxasch/flutter_app_widget/actions/workflows/interface.yaml/badge.svg)](https://github.com/noxasch/flutter_app_widget/actions/workflows/interface.yaml)
+[![android](https://github.com/noxasch/flutter_app_widget/actions/workflows/android.yaml/badge.svg)](https://github.com/noxasch/flutter_app_widget/actions/workflows/android.yaml)
+[![build](https://github.com/noxasch/flutter_app_widget/actions/workflows/main.yaml/badge.svg)](https://github.com/noxasch/flutter_app_widget/actions/workflows/main.yaml)
+
 This plugin attempt to exposed as much useful API and callback to flutter to reduce
-going back and forth to native and make buidling app widget / home screen widget easier.
+going back and forth to native and make building app widget / home screen widget easier
+and can be manage fully from flutter side keeping app codebase logic in flutter.
+
 
 |                                         |                                 |
 | ---                                     | ---                             |
 |![screen_shot](assets/screen_shot.webp)  |  ![gif](assets/example_app.gif) |
 
+## Caveat
+
+Configuring or opening a screen from the widget is slower (unless the app is still active in the background)
+compare to native because we need to wait for flutter engine to start. Hence as you can see from the gif there
+is some delay and without the launch screen we can notice this delay. Howver on Android, most likely your
+app start time will going to improve over time except during the first time user open it after an update.
+So this shouldn't be an issue. Although we can notice significant delay in old phone and in debug mode.
 
 ## Plaform Support
 
@@ -488,6 +501,6 @@ void main() {
 - [x] update documentation to cover api usage
 - [x] Test example
 - [x] Update example app
-- [ ] Github Action CI
+- [x] Github Action Workflow (CI)
 - [x] Update Screenshot
 - [ ] iOS support
