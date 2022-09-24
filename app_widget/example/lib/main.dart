@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:app_widget/app_widget.dart';
 
 void onClickWidget(String? payload) {
-  print('onClick Widget: $payload');
+  // print('onClick Widget: $payload');
 }
 
 void main() {
@@ -119,8 +119,6 @@ class UpdateWidgetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        final messenger = ScaffoldMessenger.of(context);
-
         if (_controller.text.isNotEmpty) {
           // this means the app is started by the widget config event
           final widgetId = int.parse(_controller.text);
@@ -184,7 +182,8 @@ class ReloadWidgetButton extends StatelessWidget {
       onPressed: () async {
         final messenger = ScaffoldMessenger.of(context);
         await _appWidgetPlugin.reloadWidgets(
-            androidProviderName: 'AppWidgetExampleProvider');
+          androidProviderName: 'AppWidgetExampleProvider',
+        );
         messenger.showSnackBar(
           const SnackBar(
             content:

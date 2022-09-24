@@ -1,0 +1,35 @@
+name: android
+on:
+  workflow_dispatch:
+    branches:
+      - master
+  pull_request:
+    branches: ['master']
+    paths: ['app_widget_android/lib/**', 'app_widget_android/test/**']
+  push:
+    branches: ['master']
+    paths: ['app_widget_android/lib/**', 'app_widget_android/test/**']
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app_widget_android
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3 # checkout to current dir
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: ${{ runner.os }}-flutter-install-cache
+          cache-path: ${{ runner.tool_cache }}/flutter
+      - run: flutter pub get
+      - name: Static Analysis
+        run: flutter analyze
+      - name: unit test
+        run: flutter test
+      - name: pub publishable
+        run: flutter pub publish --dry-run

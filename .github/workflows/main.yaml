@@ -1,0 +1,91 @@
+name: build
+on:
+  workflow_dispatch:
+    branches:
+      - master
+  pull_request:
+    branches: ['master']
+    paths: ['lib/**', 'android/**', 'app_widget/test/**', 'app_widget/example/**']
+  push:
+    branches: ['master']
+    paths: ['lib/**', 'android/**', 'app_widget/test/**', 'app_widget/example/**']
+jobs:
+  analysis:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./app_widget
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3 # checkout to current dir
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: ${{ runner.os }}-flutter-install-cache
+          cache-path: ${{ runner.tool_cache }}/flutter
+      - run: flutter pub get
+      - name: Static Analysis
+        run: flutter analyze
+      - name: pub publishable
+        run: flutter pub publish --dry-run
+      - name: unit test
+        run: flutter test
+  # never finish on CI, but run fine on local
+  # build_android:
+  #   needs: analysis
+  #   strategy:
+  #     matrix:
+  #       api-level: [29, 30, 31, 32, 33]
+  #   runs-on: macos-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./app_widget/example
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: 'stable'
+  #         cache: true
+  #         cache-key: ${{ runner.os }}-flutter-install-cache
+  #         cache-path: ${{ runner.tool_cache }}/flutter
+  #     - run: flutter pub get
+  #     - name: AVD cache
+  #       uses: actions/cache@v3
+  #       id: avd-cache
+  #       with:
+  #         path: |
+  #           ~/.android/avd/*
+  #           ~/.android/adb*
+  #         key: avd-${{ matrix.api-level }}
+  #     - name: create AVD and generate snapshot for caching
+  #       if: steps.avd-cache.outputs.cache-hit != 'true'
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: ${{ matrix.api-level }}
+  #         arch: x86_64
+  #         profile: Nexus 6
+  #         target: playstore
+  #         force-avd-creation: false
+  #         emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  #         disable-animations: false
+  #         script: echo "Generated AVD snapshot for caching."
+  #     - uses: actions/setup-java@v2
+  #       with:
+  #         distribution: 'adopt'
+  #         java-version: '11'
+  #         cache: 'gradle'
+  #     - name: Integration Test
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         target: playstore
+  #         api-level: ${{ matrix.api-level }}
+  #         arch: x86_64
+  #         profile: Nexus 6
+  #         force-avd-creation: false
+  #         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+  #         disable-animations: true
+  #         working-directory: ./app_widget/example
+  #         script: flutter test integration_test/android_test.dart && sleep 2 && flutter test integration_test/android_test_2.dart
