@@ -323,8 +323,10 @@ await appWidgetPlugin.getWidgetIds(
 - To make sure this bug doesn't affect your widget udpate, you'll need to register
 another task that longer maybe than your update widget task, and then cancel it
 inside the callback.
+- to avoid this use workmanager periodicTask instead
 
 ```dart
+// Using workmanager chained OneOffTask
 @pragma('vm:entry-point')
 void onConfigureWidget(int widgetId) async {
   final sharedPrefs = await SharedPreferences.getInstance();
@@ -337,13 +339,39 @@ void onConfigureWidget(int widgetId) async {
     existingWorkPolicy: ExistingWorkPolicy.keep,
     initialDelay: const Duration(minutes: 5),
   );
-  // register a dumm task
+  // register a dummy task
+  // dummy task is required to fix flickering bug
+  // https://stackoverflow.com/questions/71603702/in-android-glance-widgets-are-flickering-during-every-update-even-if-there-i
   await Workmanager().registerOneOffTask(
     'DUMMY_TASK',
     'dummyTask',
     tag: 'DUMMY_TASKS',
     existingWorkPolicy: ExistingWorkPolicy.keep,
     initialDelay: const Duration(days: 365),
+  );
+}
+
+// Using workmanager PeriodicTask
+@pragma('vm:entry-point')
+void onConfigureWidget(int widgetId) async {
+  final sharedPrefs = await SharedPreferences.getInstance();
+  await sharedPrefs.setInt('widget_id', widgetId);
+  // register task druing configure event in onConfigure callback
+  await Workmanager().registerPeriodicTask(
+    '$kUpdateWidgetTask-$widgetId',
+    kUpdateWidgetTask,
+    tag: kUpdateWidgetTag,
+    frequency: kWidgetUpdateIntervalDuration,
+    existingWorkPolicy: ExistingWorkPolicy.replace,
+    backoffPolicy: BackoffPolicy.exponential,
+    backoffPolicyDelay: const Duration(
+      seconds: 10,
+    ),
+    initialDelay: const Duration(minutes: kWidgetUpdateIntervalInMinutes),
+    inputData: {
+      'widgetId': widgetId,
+      'payload': payload,
+    },
   );
 }
 
