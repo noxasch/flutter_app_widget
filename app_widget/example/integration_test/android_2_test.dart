@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 // there is no way to test callback as it need to interact with actual widgets
-void main() {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('without androidPackageName', () {
