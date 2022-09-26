@@ -38,7 +38,7 @@ jobs:
     needs: analysis
     strategy:
       matrix:
-        api-level: [29, 30, 31, 32, 33]
+        api-level: [29] #, 30, 31, 32, 33]
     runs-on: macos-latest
     defaults:
       run:
