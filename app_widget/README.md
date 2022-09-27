@@ -248,6 +248,7 @@ await appWidgetPlugin.cancelConfigure()
 #### handling onClickWidget
 
 ```dart
+// this method can be declare as a top level function or inside a widget
 void onClickWidget(String? payload) {
   // handle click widget event
   // eg:
