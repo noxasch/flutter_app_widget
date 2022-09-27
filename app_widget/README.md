@@ -209,8 +209,6 @@ await appWidgetPlugin.configureWidget(...)
 #### handling onConfigureWidget
 
 ```dart
-// @pragma('vm:entry-point') anonnotate is to indicate thate the method may be invoked directly from native
-// More info: https://github.com/dart-lang/sdk/blob/master/runtime/docs/compiler/aot/entry_point_pragma.md
 // this method can be declare as a top level function or inside a widget as a member function
 @pragma('vm:entry-point')
 void onConfigureWidget(int widgetId) async {
@@ -251,7 +249,6 @@ await appWidgetPlugin.cancelConfigure()
 
 ```dart
 // this method can be declare as a top level function or inside a widget
-@pragma('vm:entry-point')
 void onClickWidget(String? payload) {
   // handle click widget event
   // eg:
