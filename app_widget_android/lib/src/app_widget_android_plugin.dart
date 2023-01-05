@@ -73,6 +73,7 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     final widgetIds =
         await _methodChannel.invokeMethod<List<dynamic>?>('getWidgetIds', {
       'androidProviderName': androidProviderName,
+      'androidPackageName': androidPackageName,
     });
 
     return widgetIds?.map<int>((id) => id as int).toList();
@@ -90,7 +91,8 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
     return _methodChannel.invokeMethod<bool>(
       'reloadWidgets',
-      {'androidProviderName': androidProviderName},
+      {'androidProviderName': androidProviderName,
+       'androidPackageName': androidPackageName,},
     );
   }
 
