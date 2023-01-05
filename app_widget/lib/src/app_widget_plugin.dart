@@ -99,6 +99,7 @@ class AppWidgetPlugin {
   /// in onClickWidget callback.
   ///
   Future<bool?> configureWidget({
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViews = const {},
@@ -106,7 +107,7 @@ class AppWidgetPlugin {
     String? url,
   }) async {
     return AppWidgetPlatform.instance.configureWidget(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName??_androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViews: textViews,
@@ -123,9 +124,10 @@ class AppWidgetPlugin {
   ///
   Future<List<int>?> getWidgetIds({
     required String androidProviderName,
+    String? androidPackageName,
   }) {
     return AppWidgetPlatform.instance.getWidgetIds(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName??_androidPackageName,
       androidProviderName: androidProviderName,
     );
   }
@@ -173,6 +175,7 @@ class AppWidgetPlugin {
   /// in onClickWidget callback.
   ///
   Future<bool?> updateWidget({
+    String? androidPackageName,
     int? widgetId,
     String? widgetLayout,
     Map<String, String>? textViews = const {},
@@ -180,7 +183,7 @@ class AppWidgetPlugin {
     String? url,
   }) async {
     return AppWidgetPlatform.instance.updateWidget(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName??_androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViews: textViews,
