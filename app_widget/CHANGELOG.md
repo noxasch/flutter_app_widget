@@ -1,3 +1,8 @@
+## 0.3.0
+* feat(android): support widget provider with diff androidPackageName
+* test: update widget test
+* test(android): update integration test
+
 ## 0.2.2
 
 * fix(android): `reloadWidgets` to use initialized `androidPackageName`
