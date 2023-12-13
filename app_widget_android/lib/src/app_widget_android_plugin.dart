@@ -72,6 +72,9 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
     final widgetIds =
         await _methodChannel.invokeMethod<List<dynamic>?>('getWidgetIds', {
+      if (androidPackageName != null) ...{
+        'androidPackageName': androidPackageName,
+      },
       'androidProviderName': androidProviderName,
     });
 
@@ -90,7 +93,12 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
 
     return _methodChannel.invokeMethod<bool>(
       'reloadWidgets',
-      {'androidProviderName': androidProviderName},
+      {
+        if (androidPackageName != null) ...{
+          'androidPackageName': androidPackageName,
+        },
+        'androidProviderName': androidProviderName,
+      },
     );
   }
 
@@ -107,7 +115,9 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
     assert(widgetLayout != null, 'widgetLayout is required for android!');
 
     return _methodChannel.invokeMethod<bool>('updateWidget', {
-      'androidPackageName': androidPackageName,
+      if (androidPackageName != null) ...{
+        'androidPackageName': androidPackageName,
+      },
       'widgetLayout': widgetLayout,
       'widgetId': widgetId,
       'textViews': textViews,

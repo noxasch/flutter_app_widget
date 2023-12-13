@@ -1,3 +1,8 @@
+## 0.3.0
+
+*feat(android): support widget provider with different package name
+*fix(android): fix MainActivity not using application package name
+
 ## 0.2.1
 
 * fix(android): onClickWidget callback should be independent on each widget

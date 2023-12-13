@@ -32,7 +32,7 @@ plugin.
 in `app_widget/example/integration_test/app_widget_test.dart`
 
 ```sh
+cd app_widget/example
 # this will require a connected device for android
 flutter test integration_test/app_widget_test.dart
 ```
-
