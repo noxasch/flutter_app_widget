@@ -1,3 +1,7 @@
+## 0.3.2
+
+*chore: update latest dependencies
+
 ## 0.3.1
 
 *chore: use latest platform interface

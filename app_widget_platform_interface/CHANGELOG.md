@@ -1,4 +1,8 @@
+## 0.3.1
+
+* update platform interface version
 ## 0.3.0
+
 * support dart sdk 4.0
 
 ## 0.2.0

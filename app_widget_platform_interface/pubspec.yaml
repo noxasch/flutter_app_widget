@@ -1,6 +1,6 @@
 name: app_widget_platform_interface
 description: Common platform interface for app_widget plugin.
-version: 0.3.0
+version: 0.3.1
 homepage: https://noxasch.tech/
 repository: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget_platform_interface
 issue_tracker: https://github.com/noxasch/flutter_app_widget/issues
@@ -12,7 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.7
 
 dev_dependencies:
   flutter_test:
