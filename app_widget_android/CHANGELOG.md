@@ -1,3 +1,15 @@
+## 0.3.2
+
+*chore: update latest dependencies
+
+## 0.3.1
+
+*chore: use latest platform interface
+## 0.3.0
+
+*feat: support widget provider with different package name
+*fix: fix MainActivity not using application package name
+
 ## 0.2.1
 
 * fix(android): onClickWidget callback should be independent on each widget
