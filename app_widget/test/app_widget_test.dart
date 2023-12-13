@@ -75,6 +75,37 @@ void main() {
       ]);
     });
 
+    test('configureWidget diff package name', () async {
+      final appWidgetPlugin = AppWidgetPlugin(
+        androidPackageName: 'appname',
+      );
+
+      expect(
+        appWidgetPlugin.configureWidget(
+          widgetId: 1,
+          widgetLayout: 'layoutname',
+          payload: '{"itemId": 1, "stringUid": "uid"}',
+          url: 'https://google.come',
+          androidPackageName: 'appname2',
+        ),
+        completion(true),
+      );
+
+      expect(log, <Matcher>[
+        isMethodCall(
+          'configureWidget',
+          arguments: <String, Object>{
+            'androidPackageName': 'appname2',
+            'widgetId': 1,
+            'widgetLayout': 'layoutname',
+            'textViews': {},
+            'payload': '{"itemId": 1, "stringUid": "uid"}',
+            'url': 'https://google.come',
+          },
+        )
+      ]);
+    });
+
     test('updateWidget', () async {
       final appWidgetPlugin = AppWidgetPlugin(
         androidPackageName: 'appname',
@@ -105,10 +136,39 @@ void main() {
       ]);
     });
 
-    test('cancelConfigureWidget', () async {
+    test('updateWidget different widget package name', () async {
       final appWidgetPlugin = AppWidgetPlugin(
         androidPackageName: 'appname',
       );
+
+      expect(
+        appWidgetPlugin.updateWidget(
+          androidPackageName: 'appname2',
+          widgetId: 1,
+          widgetLayout: 'layoutname',
+          payload: '{"itemId": 1, "stringUid": "uid"}',
+          url: 'https://google.come',
+        ),
+        completion(true),
+      );
+
+      expect(log, <Matcher>[
+        isMethodCall(
+          'updateWidget',
+          arguments: <String, Object>{
+            'androidPackageName': 'appname2',
+            'widgetId': 1,
+            'widgetLayout': 'layoutname',
+            'textViews': {},
+            'payload': '{"itemId": 1, "stringUid": "uid"}',
+            'url': 'https://google.come',
+          },
+        )
+      ]);
+    });
+
+    test('cancelConfigureWidget', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
 
       expect(
         appWidgetPlugin.cancelConfigureWidget(),
@@ -138,6 +198,29 @@ void main() {
           'getWidgetIds',
           arguments: <String, Object>{
             'androidProviderName': 'TestProvider',
+            'androidPackageName': 'appname',
+          },
+        )
+      ]);
+    });
+
+    test('getWidgetIds diff package name', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.getWidgetIds(
+          androidProviderName: 'TestProvider',
+          androidPackageName: 'appname2',
+        ),
+        completion([42]),
+      );
+
+      expect(log, <Matcher>[
+        isMethodCall(
+          'getWidgetIds',
+          arguments: <String, Object>{
+            'androidProviderName': 'TestProvider',
+            'androidPackageName': 'appname2',
           },
         )
       ]);
@@ -158,6 +241,29 @@ void main() {
           'reloadWidgets',
           arguments: <String, Object>{
             'androidProviderName': 'TestProvider',
+            'androidPackageName': 'appname',
+          },
+        )
+      ]);
+    });
+
+    test('reloadWidgets diff package name', () async {
+      final appWidgetPlugin = AppWidgetPlugin();
+
+      expect(
+        appWidgetPlugin.reloadWidgets(
+          androidProviderName: 'TestProvider',
+          androidPackageName: 'appname2',
+        ),
+        completion(true),
+      );
+
+      expect(log, <Matcher>[
+        isMethodCall(
+          'reloadWidgets',
+          arguments: <String, Object>{
+            'androidProviderName': 'TestProvider',
+            'androidPackageName': 'appname2',
           },
         )
       ]);

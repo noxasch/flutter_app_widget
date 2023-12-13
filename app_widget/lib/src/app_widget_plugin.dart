@@ -104,9 +104,10 @@ class AppWidgetPlugin {
     Map<String, String>? textViews = const {},
     String? payload,
     String? url,
+    String? androidPackageName,
   }) async {
     return AppWidgetPlatform.instance.configureWidget(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName ?? _androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViews: textViews,
@@ -123,9 +124,10 @@ class AppWidgetPlugin {
   ///
   Future<List<int>?> getWidgetIds({
     required String androidProviderName,
+    String? androidPackageName,
   }) {
     return AppWidgetPlatform.instance.getWidgetIds(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName ?? _androidPackageName,
       androidProviderName: androidProviderName,
     );
   }
@@ -143,9 +145,10 @@ class AppWidgetPlugin {
   ///
   Future<bool?> reloadWidgets({
     String? androidProviderName,
+    String? androidPackageName,
   }) async {
     return AppWidgetPlatform.instance.reloadWidgets(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName ?? _androidPackageName,
       androidProviderName: androidProviderName,
     );
   }
@@ -178,9 +181,10 @@ class AppWidgetPlugin {
     Map<String, String>? textViews = const {},
     String? payload,
     String? url,
+    String? androidPackageName,
   }) async {
     return AppWidgetPlatform.instance.updateWidget(
-      androidPackageName: _androidPackageName,
+      androidPackageName: androidPackageName ?? _androidPackageName,
       widgetId: widgetId,
       widgetLayout: widgetLayout,
       textViews: textViews,
