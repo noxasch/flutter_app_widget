@@ -1,3 +1,6 @@
+## 0.3.0
+* support dart sdk 4.0
+
 ## 0.2.0
 
 * breaking changes: `androidAppName` renamed to `androidPackageName`
