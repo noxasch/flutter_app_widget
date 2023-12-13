@@ -13,8 +13,8 @@ void main() {
   final List<MethodCall> log = <MethodCall>[];
 
   setUpAll(() {
-    // ignore: always_specify_types
-    channel.setMockMethodCallHandler((methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (methodCall) async {
       log.add(methodCall);
       switch (methodCall.method) {
         case 'getPlatformVersion':
@@ -32,6 +32,7 @@ void main() {
         case 'widgetExist':
           return true;
         default:
+          return false;
       }
     });
   });
@@ -71,7 +72,7 @@ void main() {
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
           },
-        )
+        ),
       ]);
     });
 
@@ -102,7 +103,7 @@ void main() {
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
           },
-        )
+        ),
       ]);
     });
 
@@ -132,7 +133,7 @@ void main() {
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
           },
-        )
+        ),
       ]);
     });
 
@@ -163,7 +164,7 @@ void main() {
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
           },
-        )
+        ),
       ]);
     });
 
@@ -179,7 +180,7 @@ void main() {
         isMethodCall(
           'cancelConfigureWidget',
           arguments: null,
-        )
+        ),
       ]);
     });
 
@@ -200,7 +201,7 @@ void main() {
             'androidProviderName': 'TestProvider',
             'androidPackageName': 'appname',
           },
-        )
+        ),
       ]);
     });
 
@@ -222,7 +223,7 @@ void main() {
             'androidProviderName': 'TestProvider',
             'androidPackageName': 'appname2',
           },
-        )
+        ),
       ]);
     });
 
@@ -243,7 +244,7 @@ void main() {
             'androidProviderName': 'TestProvider',
             'androidPackageName': 'appname',
           },
-        )
+        ),
       ]);
     });
 
@@ -265,7 +266,7 @@ void main() {
             'androidProviderName': 'TestProvider',
             'androidPackageName': 'appname2',
           },
-        )
+        ),
       ]);
     });
 
@@ -283,7 +284,7 @@ void main() {
           arguments: <String, Object>{
             'widgetId': 12,
           },
-        )
+        ),
       ]);
     });
   });

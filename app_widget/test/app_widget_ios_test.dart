@@ -11,8 +11,8 @@ void main() {
   final List<MethodCall> log = <MethodCall>[];
 
   setUpAll(() {
-    // ignore: always_specify_types
-    channel.setMockMethodCallHandler((methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (methodCall) async {
       log.add(methodCall);
       switch (methodCall.method) {
         case 'getPlatformVersion':
@@ -28,6 +28,7 @@ void main() {
         case 'widgetExist':
           return true;
         default:
+          return null;
       }
     });
   });

@@ -465,25 +465,27 @@ void main() {
 
   const MethodChannel channel = MethodChannel(AppWidgetPlatform.channel);
   final List<MethodCall> log = <MethodCall>[];
+  
 
-  channel.setMockMethodCallHandler((methodCall) async {
-      log.add(methodCall);
-      switch (methodCall.method) {
-        case 'configureWidget':
-          return true;
-        case 'cancelConfigureWidget':
-          return true;
-        case 'getWidgetIds':
-          return [42];
-        case 'reloadWidgets':
-          return true;
-        case 'updateWidget':
-          return true;
-        case 'widgetExist':
-          return true;
-        default:
-      }
-    });
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(channel, (methodCall) async {
+    log.add(methodCall);
+    switch (methodCall.method) {
+      case 'getPlatformVersion':
+        return '42';
+      case 'configureWidget':
+        return true;
+      case 'cancelConfigureWidget':
+        return true;
+      case 'getWidgetIds':
+        return [];
+      case 'reloadWidgets':
+        return true;
+      case 'widgetExist':
+        return true;
+      default:
+        return null;
+    }
   });
 
   setUp(() {
