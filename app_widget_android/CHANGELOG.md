@@ -1,7 +1,10 @@
+## 0.3.1
+
+*chore: use latest platform interface
 ## 0.3.0
 
-*feat(android): support widget provider with different package name
-*fix(android): fix MainActivity not using application package name
+*feat: support widget provider with different package name
+*fix: fix MainActivity not using application package name
 
 ## 0.2.1
 
