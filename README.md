@@ -1,3 +1,7 @@
+[![platform-interface](https://github.com/noxasch/flutter_app_widget/actions/workflows/interface.yaml/badge.svg)](https://github.com/noxasch/flutter_app_widget/actions/workflows/interface.yaml)
+[![android](https://github.com/noxasch/flutter_app_widget/actions/workflows/android.yaml/badge.svg)](https://github.com/noxasch/flutter_app_widget/actions/workflows/android.yaml)
+[![build](https://github.com/noxasch/flutter_app_widget/actions/workflows/main.yaml/badge.svg)](https://github.com/noxasch/flutter_app_widget/actions/workflows/main.yaml)
+
 # Flutter App Widget
 App Widget / Home Screen widget plugin for flutter app
 
