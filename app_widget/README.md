@@ -13,7 +13,11 @@ and can be manage fully from flutter side keeping app codebase logic in flutter.
 | ---                                     | ---                             |
 |![screen_shot](assets/screen_shot.webp)  |  ![gif](assets/example_app.gif) |
 
-## Caveat
+## Note
+- Please see the changelogs for breaking changes
+- Every minor version update might introduce a breaking changes as this plugin is still considered alpha
+
+## Caveats
 
 Configuring or opening a screen from the widget is slower (unless the app is still active in the background)
 compare to native because we need to wait for flutter engine to start. Hence as you can see from the gif there
@@ -22,6 +26,8 @@ app start time will going to improve over time except during the first time user
 So this shouldn't be an issue. Although we can notice significant delay in old phone and in debug mode.
 
 ## Plaform Support
+
+As of current state I have no capacity to support for iOS, but help is welcome.
 
 | Android | iOS |
 | :-----: | :-: |
@@ -211,10 +217,14 @@ await appWidgetPlugin.configureWidget(...)
 ```dart
 // this method can be declare as a top level function or inside a widget as a member function
 @pragma('vm:entry-point')
-void onConfigureWidget(int widgetId) async {
+void onConfigureWidget(int widgetId, int layoutId, String layoutName) async {
   // handle widget configuration
   // eg:
   // redirect or use launchUrl and deeplink redirect to configuration page
+  // store widgetId, layoutId and layoutName in sharedPref
+  // use layoutName to build proper payload
+
+  // layoutName: tech.noxasch.app_widget_example:layout/example_layout
 }
 
 // onConfigureWidget callback are optional
@@ -229,7 +239,7 @@ final appWidgetPlugin = AppWidgetPlugin(
 await appWidgetPlugin.configureWidget(
    // change to androidPackageName - we needed as param since there is no standard on how long the domain name can be
   widgetId: _widgetId!,
-  widgetLayout: 'example_layout',
+  layoutId: _layoutId!,
   textViews: {
     'widget_title': 'MY WIDGET',
     'widget_message': 'This is my widget message'
@@ -264,7 +274,9 @@ final appWidgetPlugin = AppWidgetPlugin(
 ```
 
 #### updateWidget
-Make sure you store the `widgetId` during widget configuration.
+Make sure you store the `widgetId` and `layoutId` during widget configuration.
+
+Tips: Store `layoutName` to easily manage payload textViews for multiple layout
 
 Most of the time you'll want to update widget via workmanager. See [below](#handling-widget-update-using-in-flutter-workmanger)
 how to use the plugin in workmanager.
@@ -325,9 +337,10 @@ inside the callback.
 ```dart
 // Using workmanager chained OneOffTask
 @pragma('vm:entry-point')
-void onConfigureWidget(int widgetId) async {
+void onConfigureWidget(int widgetId, int layoutId) async {
   final sharedPrefs = await SharedPreferences.getInstance();
    await sharedPrefs.setInt('widget_id', widgetId);
+   await sharedPrefs.setInt('layout_id', layoutId);
   // register task druing configure event in onConfigure callback
   await Workmanager().registerOneOffTask(
     'UpdateMyWidget',
@@ -353,6 +366,7 @@ void onConfigureWidget(int widgetId) async {
 void onConfigureWidget(int widgetId) async {
   final sharedPrefs = await SharedPreferences.getInstance();
   await sharedPrefs.setInt('widget_id', widgetId);
+  await sharedPrefs.setInt('layout_id', layoutId);
   // register task druing configure event in onConfigure callback
   await Workmanager().registerPeriodicTask(
     '$kUpdateWidgetTask-$widgetId',
@@ -367,6 +381,7 @@ void onConfigureWidget(int widgetId) async {
     initialDelay: const Duration(minutes: kWidgetUpdateIntervalInMinutes),
     inputData: {
       'widgetId': widgetId,
+      'layoutId': layoutId,
       'payload': payload,
     },
   );
@@ -404,11 +419,12 @@ Future<void> updateWidgetWorker() async {
   final repo = db.todosRepository;
 
   final widgetId = sharedPrefs.getInt('widget_id');
+  final layoutId = sharedPrefs.getInt('layout_id');
 
   if (widgetId != null) {
     await appWidgetPlugin.updateWidget(
-      widgetId: _widgetId!,
-      widgetLayout: 'example_layout',
+      widgetId: widgetId!,
+      layoutId: layoutId,
       textViews: {
         'widget_title': 'MY WIDGET',
         'widget_message': 'This is my widget message'
@@ -503,14 +519,14 @@ void main() {
       ...
     ), isTrue);
 
-    // testing if your method that call configureWidget sending the expected argumetns
+    // testing if your method that call configureWidget sending the expected arguments - interface level only
     expect(log, <Matcher>[
         isMethodCall(
           'configureWidget',
           arguments: <String, Object>{
             'androidPackageName': 'appname', // androidPackageName is included behind the scene
             'widgetId': 1,
-            'widgetLayout': 'layoutname',
+            'layoutId': 1,
             'textViews': {},
             'payload': '{"itemId": 1, "stringUid": "uid"}'
           },

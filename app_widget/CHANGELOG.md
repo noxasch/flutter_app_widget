@@ -1,3 +1,7 @@
+## 0.4.0
+* breaking changes: `configureWidget` and `updateWidget` accept `layoutId` instead of `layoutName`
+* breaking changes: `onConfigureWidget` now accept 3 params (`widgetId`, `layoutId`, `layoutName`)
+
 ## 0.3.1
 * fix(android): fix trigger update widget updating the widget multiple time
 
