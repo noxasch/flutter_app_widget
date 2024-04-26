@@ -72,19 +72,26 @@ class AppWidgetPlugin: FlutterPlugin, ActivityAware,
       val widgetId: Int = extras?.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID) ?: return
       if (widgetId == 0) return
 
+      val widgetManager = AppWidgetManager.getInstance(context)
+      val appWidgetInfo = widgetManager.getAppWidgetInfo(widgetId)
+      val layoutId = appWidgetInfo.initialLayout
+      val layoutName = context.resources.getResourceName(layoutId)
+
       val configIntent = Intent(context, context.javaClass)
       configIntent.action = CONFIGURE_WIDGET_ACTION_CALLBACK
       configIntent.putExtra("widgetId", widgetId)
+      configIntent.putExtra("layoutId", layoutId)
+      configIntent.putExtra("layoutName", layoutName)
       context.startActivity(configIntent)
     }
   }
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     methodCallHandler = AppWidgetMethodCallHandler(flutterPluginBinding.applicationContext)
     methodCallHandler!!.open(flutterPluginBinding.binaryMessenger)
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     methodCallHandler!!.close()
   }
 

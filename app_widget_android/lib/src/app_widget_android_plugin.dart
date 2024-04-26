@@ -11,21 +11,25 @@ const MethodChannel _methodChannel = MethodChannel(AppWidgetPlatform.channel);
 
 class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   AppWidgetAndroidPlugin({
-    void Function(int widgetId)? onConfigureWidget,
+    void Function(int widgetId, int layoutId, String layoutName)?
+        onConfigureWidget,
     void Function(String? payload)? onClickWidget,
   })  : _onConfigureWidget = onConfigureWidget,
         _onClickWidget = onClickWidget {
     _methodChannel.setMethodCallHandler(handleMethod);
   }
 
-  final void Function(int widgetId)? _onConfigureWidget;
+  final void Function(int widgetId, int layoutId, String layoutName)?
+      _onConfigureWidget;
   final void Function(String? payload)? _onClickWidget;
 
   Future<dynamic> handleMethod(MethodCall call) async {
     switch (call.method) {
       case onConfigureWidgetCallback:
         final widgetId = call.arguments['widgetId'] as int;
-        return _onConfigureWidget?.call(widgetId);
+        final layoutId = call.arguments['layoutId'] as int;
+        final layoutName = call.arguments['layoutName'] as String;
+        return _onConfigureWidget?.call(widgetId, layoutId, layoutName);
       case onClickWidgetCallback:
         return _onClickWidget?.call(call.arguments['payload'] as String);
       default:
@@ -42,18 +46,18 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   Future<bool?> configureWidget({
     String? androidPackageName,
     int? widgetId,
-    String? widgetLayout,
+    int? layoutId,
     Map<String, String>? textViews = const {},
     String? payload,
     String? url,
   }) {
     assert(widgetId != null, 'widgetId is required for android!');
-    assert(widgetLayout != null, 'widgetLayout is required for android!');
+    assert(layoutId != null, 'layoutId is required for android!');
 
     return _methodChannel.invokeMethod<bool>('configureWidget', {
       'androidPackageName': androidPackageName,
-      'widgetLayout': widgetLayout,
       'widgetId': widgetId,
+      'layoutId': layoutId,
       'textViews': textViews,
       'payload': payload,
       'url': url,
@@ -106,20 +110,21 @@ class AppWidgetAndroidPlugin extends AppWidgetAndroid {
   Future<bool?> updateWidget({
     String? androidPackageName,
     int? widgetId,
+    int? layoutId,
     String? widgetLayout,
     Map<String, String>? textViews = const {},
     String? payload,
     String? url,
   }) {
     assert(widgetId != null, 'widgetId is required for android!');
-    assert(widgetLayout != null, 'widgetLayout is required for android!');
+    assert(layoutId != null, 'layoutId is required for android!');
 
     return _methodChannel.invokeMethod<bool>('updateWidget', {
       if (androidPackageName != null) ...{
         'androidPackageName': androidPackageName,
       },
-      'widgetLayout': widgetLayout,
       'widgetId': widgetId,
+      'layoutId': layoutId,
       'textViews': textViews,
       'payload': payload,
       'url': url,

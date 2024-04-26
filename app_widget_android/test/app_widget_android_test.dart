@@ -76,6 +76,7 @@ class MockAppWidgetAndroidPlatform
   Future<bool?> configureWidget({
     String? androidPackageName,
     int? widgetId,
+    int? layoutId,
     String? widgetLayout,
     String? widgetContainerName,
     Map<String, String>? textViews,
@@ -97,6 +98,7 @@ class MockAppWidgetAndroidPlatform
   Future<bool?> updateWidget({
     String? androidPackageName,
     int? widgetId,
+    int? layoutId,
     String? widgetLayout,
     Map<String, String>? textViews,
     String? payload,
