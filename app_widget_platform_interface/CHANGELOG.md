@@ -1,6 +1,10 @@
+## 0.4.0
+* breaking changes: `configureWidget` and `updateWidget` accept `layoutId` instead of `layoutName`
+
 ## 0.3.1
 
 * update platform interface version
+
 ## 0.3.0
 
 * support dart sdk 4.0

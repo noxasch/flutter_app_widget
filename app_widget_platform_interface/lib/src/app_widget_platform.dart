@@ -34,7 +34,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
   Future<bool?> configureWidget({
     String? androidPackageName,
     int? widgetId,
-    String? widgetLayout,
+    int? layoutId,
     Map<String, String>? textViews,
     String? payload,
     String? url,
@@ -52,7 +52,7 @@ abstract class AppWidgetPlatform extends PlatformInterface {
   Future<bool?> updateWidget({
     String? androidPackageName,
     int? widgetId,
-    String? widgetLayout,
+    int? layoutId,
     Map<String, String>? textViews,
     String? payload,
     String? url,
