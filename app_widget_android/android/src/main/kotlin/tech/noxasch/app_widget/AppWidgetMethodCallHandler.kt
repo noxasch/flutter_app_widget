@@ -129,7 +129,6 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                         setOnClickPendingIntent(textViewId, pendingIntent)
                     }
                 }
-
                 appWidgetManager.updateAppWidget(widgetId, views)
             }
 
@@ -185,12 +184,10 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
                     // only work if widget is blank - so we have to clear it first
                     views.setTextViewText(textViewId, "")
-                    appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
                     views.setTextViewText(textViewId, value)
-                    appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
                     views.setOnClickPendingIntent(textViewId, pendingIntent)
-                    appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
                 }
+                appWidgetManager.partiallyUpdateAppWidget(widgetId, views)
             }
 
             result.success(true)
