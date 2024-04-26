@@ -14,7 +14,7 @@ void main() {
     testWidgets('configureWidget', (tester) async {
       final res = await appWidgetPlugin.configureWidget(
         widgetId: 1,
-        widgetLayout: 'example_layout',
+        layoutId: 1,
         payload: '{"itemId": 1, "stringUid": "uid"}',
         url: 'https://google.come',
       );
@@ -30,7 +30,7 @@ void main() {
     testWidgets('updateWidget', (tester) async {
       final res = await appWidgetPlugin.updateWidget(
         widgetId: 1,
-        widgetLayout: 'example_layout',
+        layoutId: 1,
         payload: '{"itemId": 1, "stringUid": "uid"}',
         url: 'https://google.come',
         textViews: {'widget_title': 'my title'},

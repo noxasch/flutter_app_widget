@@ -24,7 +24,8 @@ class AppWidgetPlugin {
     String? androidPackageName,
 
     /// callback function when the widget is first created
-    void Function(int widgetId)? onConfigureWidget,
+    void Function(int widgetId, int layoutId, String layoutName)?
+        onConfigureWidget,
     void Function(String? payload)? onClickWidget,
   }) {
     if (instance != null) return instance!;
@@ -39,7 +40,8 @@ class AppWidgetPlugin {
 
   AppWidgetPlugin._({
     required String? androidPackageName,
-    required void Function(int widgetId)? onConfigureWidget,
+    required void Function(int widgetId, int layoutId, String layoutName)?
+        onConfigureWidget,
     required void Function(String? payload)? onClickWidget,
   })  : _onConfigureWidget = onConfigureWidget,
         _onClickWidget = onClickWidget,
@@ -62,7 +64,8 @@ class AppWidgetPlugin {
   final String? _androidPackageName;
 
   /// callback function when the widget is first created
-  final void Function(int widgetId)? _onConfigureWidget;
+  final void Function(int widgetId, int layoutId, String layoutName)?
+      _onConfigureWidget;
 
   /// payload keys:
   /// - itemId
@@ -100,7 +103,7 @@ class AppWidgetPlugin {
   ///
   Future<bool?> configureWidget({
     int? widgetId,
-    String? widgetLayout,
+    int? layoutId,
     Map<String, String>? textViews = const {},
     String? payload,
     String? url,
@@ -109,7 +112,7 @@ class AppWidgetPlugin {
     return AppWidgetPlatform.instance.configureWidget(
       androidPackageName: androidPackageName ?? _androidPackageName,
       widgetId: widgetId,
-      widgetLayout: widgetLayout,
+      layoutId: layoutId,
       textViews: textViews,
       payload: payload,
       url: url,
@@ -177,6 +180,7 @@ class AppWidgetPlugin {
   ///
   Future<bool?> updateWidget({
     int? widgetId,
+    int? layoutId,
     String? widgetLayout,
     Map<String, String>? textViews = const {},
     String? payload,
@@ -186,7 +190,7 @@ class AppWidgetPlugin {
     return AppWidgetPlatform.instance.updateWidget(
       androidPackageName: androidPackageName ?? _androidPackageName,
       widgetId: widgetId,
-      widgetLayout: widgetLayout,
+      layoutId: layoutId,
       textViews: textViews,
       payload: payload,
       url: url,

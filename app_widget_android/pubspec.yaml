@@ -1,6 +1,6 @@
 name: app_widget_android
 description: Android implementation for app_widget plugin
-version: 0.3.3
+version: 0.4.0
 homepage: https://noxasch.tech/
 repository: https://github.com/noxasch/flutter_app_widget/tree/master/app_widget_android
 issue_tracker: https://github.com/noxasch/flutter_app_widget/issues
@@ -13,7 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.1.7
-  app_widget_platform_interface: ^0.3.1
+  app_widget_platform_interface: ^0.4.0
   # app_widget_platform_interface: # local dev
   #   path: ../app_widget_platform_interface
 

@@ -39,7 +39,15 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
     fun handleConfigureIntent(intent: Intent): Boolean {
         val widgetId = intent.extras!!.getInt("widgetId")
-        channel!!.invokeMethod(AppWidgetPlugin.ON_CONFIGURE_WIDGET_CALLBACK, mapOf("widgetId" to widgetId))
+        val layoutId = intent.extras!!.getInt("layoutId")
+        val layoutName = intent.extras!!.getString("layoutName")
+        channel!!.invokeMethod(AppWidgetPlugin.ON_CONFIGURE_WIDGET_CALLBACK,
+                mapOf(
+                        "widgetId" to widgetId,
+                        "layoutId" to layoutId,
+                        "layoutName" to layoutName
+                )
+        )
         return true
     }
 
@@ -67,7 +75,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         }
     }
 
-    private fun getWidgetIds(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+    private fun getWidgetIds(call: MethodCall, result: MethodChannel.Result) {
         val androidPackageName = call.argument<String>("androidPackageName")
             ?: context.packageName
         val widgetProviderName = call.argument<String>("androidProviderName") ?: return result.error(
@@ -88,7 +96,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         }
     }
 
-    private fun cancelConfigureWidget(@NonNull result: MethodChannel.Result) {
+    private fun cancelConfigureWidget(result: MethodChannel.Result) {
         return try {
             activity!!.setResult(Activity.RESULT_CANCELED)
             result.success(true)
@@ -100,7 +108,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
 
 
     /// This should be called when configuring individual widgets
-    private fun configureWidget(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+    private fun configureWidget(call: MethodCall, result: MethodChannel.Result) {
         return try {
             if (activity == null) return result.error("-2", "Not attached to any activity!", null)
 
@@ -108,10 +116,8 @@ class AppWidgetMethodCallHandler(private val context: Context, )
                 ?:  context.packageName
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
-            val widgetLayout = call.argument<String>("widgetLayout")
-                ?: return result.error("-1", "widgetLayout is required!", null)
-
-            val widgetLayoutId: Int = context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
+            val layoutId = call.argument<Int>("layoutId")
+                    ?: return result.error("-1", "layoutId is required!", null)
             val payload = call.argument<String>("payload")
             val url = call.argument<String>("url")
             val activityClass = Class.forName("${context.packageName}.MainActivity")
@@ -120,7 +126,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             val textViewsMap = call.argument<Map<String, String>>("textViews")
 
             if (textViewsMap != null) {
-                val views : RemoteViews = RemoteViews(context.packageName, widgetLayoutId).apply {
+                val views : RemoteViews = RemoteViews(context.packageName, layoutId).apply {
                     for ((key, value) in textViewsMap) {
                         val textViewId: Int =
                             context.resources.getIdentifier(key, "id", context.packageName)
@@ -143,7 +149,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
         }
     }
 
-    private fun widgetExist(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+    private fun widgetExist(call: MethodCall, result: MethodChannel.Result) {
         val widgetId = call.argument<Int>("widgetId") ?: return result.success(false)
         return try {
             val widgetManager = AppWidgetManager.getInstance(context)
@@ -156,17 +162,15 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     }
 
     // This should only be called after the widget has been configure for the first time
-    private fun updateWidget(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+    private fun updateWidget(call: MethodCall, result: MethodChannel.Result) {
         return try {
             val androidPackageName = call.argument<String>("androidPackageName")
                 ?: context.packageName
             val widgetId = call.argument<Int>("widgetId")
                 ?: return result.error("-1", "widgetId is required!", null)
-            val widgetLayout = call.argument<String>("widgetLayout")
-                ?: return result.error("-1", "widgetLayout is required!", null)
+            val layoutId = call.argument<Int>("layoutId")
+                    ?: return result.error("-1", "layoutId is required!", null)
 
-            val widgetLayoutId: Int =
-                context.resources.getIdentifier(widgetLayout, "layout", context.packageName)
             val payload = call.argument<String>("payload")
             val url = call.argument<String>("url")
             val activityClass = Class.forName("${context.packageName}.MainActivity")
@@ -175,7 +179,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
             val textViewsMap = call.argument<Map<String, String>>("textViews")
 
             if (textViewsMap != null) {
-                val views = RemoteViews(context.packageName, widgetLayoutId)
+                val views = RemoteViews(context.packageName, layoutId)
 
                 for ((key, value) in textViewsMap) {
                     val textViewId: Int =
@@ -230,7 +234,7 @@ class AppWidgetMethodCallHandler(private val context: Context, )
     }
 
     /// force reload the widget and this will trigger onUpdate in broadcast receiver
-    private fun reloadWidgets(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+    private fun reloadWidgets(call: MethodCall, result: MethodChannel.Result) {
         val androidPackageName = call.argument<String>("androidPackageName")
             ?:  context.packageName
         val widgetProviderName = call.argument<String>("androidProviderName")
