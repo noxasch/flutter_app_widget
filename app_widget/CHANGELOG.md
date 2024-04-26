@@ -1,5 +1,5 @@
 ## 0.3.1
-*fix(android): fix trigger update widget updating the widget multiple time
+* fix(android): fix trigger update widget updating the widget multiple time
 
 ## 0.3.0
 * feat(android): support widget provider with diff androidPackageName
