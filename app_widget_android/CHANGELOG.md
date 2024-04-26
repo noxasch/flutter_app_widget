@@ -1,3 +1,7 @@
+
+## 0.3.3
+*fix: fix trigger update widget updating the widget multiple time
+
 ## 0.3.2
 
 *chore: update latest dependencies
