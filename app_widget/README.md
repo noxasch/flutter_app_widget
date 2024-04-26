@@ -284,7 +284,7 @@ how to use the plugin in workmanager.
 ```dart
 await appWidgetPlugin.updateWidget(
   widgetId: _widgetId!,
-  widgetLayout: 'example_layout',
+  layoutId: _layoutId!,
   textViews: {
     'widget_title': 'MY WIDGET',
     'widget_message': 'This is my widget message'
