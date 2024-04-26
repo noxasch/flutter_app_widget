@@ -15,7 +15,7 @@ void main() {
       final res = await appWidgetPlugin.configureWidget(
         androidPackageName: 'tech.noxasch.diff_name',
         widgetId: 1,
-        widgetLayout: 'example_layout',
+        layoutId: 1,
         payload: '{"itemId": 1, "stringUid": "uid"}',
         url: 'https://google.come',
       );
@@ -32,7 +32,7 @@ void main() {
       final res = await appWidgetPlugin.updateWidget(
         androidPackageName: 'tech.noxasch.diff_name',
         widgetId: 1,
-        widgetLayout: 'example_layout',
+        layoutId: 1,
         payload: '{"itemId": 1, "stringUid": "uid"}',
         url: 'https://google.come',
         textViews: {'widget_title': 'my title'},

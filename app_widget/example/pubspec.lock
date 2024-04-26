@@ -12,18 +12,18 @@ packages:
     dependency: transitive
     description:
       name: app_widget_android
-      sha256: "9b5fc286e3f4add2404468035effbd584935e31b064b36228623f7b12678b77b"
+      sha256: "9a0aa193b373bf2e548d5af721e021b166f607ad932fc144334ce55b4ff40320"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.3"
+    version: "0.4.0"
   app_widget_platform_interface:
     dependency: transitive
     description:
       name: app_widget_platform_interface
-      sha256: "07c7500e83f86703fdad1aa3480e492a7226b322cbad3e71910f2630df96391e"
+      sha256: a288112ec826c25e7638ddc30c33a5e7279cfc2eadba89ccb33bc8d3ddbb589c
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.4.0"
   async:
     dependency: transitive
     description:

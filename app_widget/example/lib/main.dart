@@ -24,8 +24,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final AppWidgetPlugin _appWidgetPlugin;
-  late final TextEditingController _controller;
+  late final TextEditingController _widgetIdcontroller;
+  late final TextEditingController _layoutIdcontroller;
+  late final TextEditingController _layoutNamecontroller;
   int? _widgetId;
+  int? _layoutId;
+  String? _layoutName;
 
   @override
   void initState() {
@@ -35,17 +39,28 @@ class _MyAppState extends State<MyApp> {
       onConfigureWidget: onConfigureWidget,
       onClickWidget: onClickWidget,
     );
-    _controller = TextEditingController();
+    _widgetIdcontroller = TextEditingController();
+    _layoutIdcontroller = TextEditingController();
+    _layoutNamecontroller = TextEditingController();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _widgetIdcontroller.dispose();
+    _layoutIdcontroller.dispose();
+    _layoutNamecontroller.dispose();
     super.dispose();
   }
 
-  void onConfigureWidget(int widgetId) {
-    setState(() => _widgetId = widgetId);
+  void onConfigureWidget(int widgetId, int layoutId, String layoutName) {
+    setState(() {
+      _widgetId = widgetId;
+      _layoutId = layoutId;
+      _layoutName = layoutName;
+    });
+    _widgetIdcontroller.text = widgetId.toString();
+    _layoutIdcontroller.text = layoutId.toString();
+    _layoutNamecontroller.text = layoutName.toString();
     // do something
   }
 
@@ -65,20 +80,45 @@ class _MyAppState extends State<MyApp> {
                   padding: const EdgeInsets.all(30.0),
                   child: TextField(
                     decoration: const InputDecoration(label: Text('Widget Id')),
-                    controller: _controller,
+                    controller: _widgetIdcontroller,
                     keyboardType: TextInputType.number,
                   ),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: TextField(
+                    decoration: const InputDecoration(label: Text('Layout Id')),
+                    controller: _layoutIdcontroller,
+                    readOnly: true,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: TextField(
+                    decoration:
+                        const InputDecoration(label: Text('Layout Name')),
+                    controller: _layoutNamecontroller,
+                    readOnly: true,
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 ConfigureButton(
-                    widgetId: _widgetId, appWidgetPlugin: _appWidgetPlugin),
+                    widgetId: _widgetId,
+                    layoutId: _layoutId,
+                    appWidgetPlugin: _appWidgetPlugin),
                 const SizedBox(
                   height: 10,
                 ),
                 WidgetExistButton(
-                  controller: _controller,
+                  controller: _widgetIdcontroller,
                   appWidgetPlugin: _appWidgetPlugin,
                 ),
                 const SizedBox(
@@ -89,7 +129,8 @@ class _MyAppState extends State<MyApp> {
                   height: 10,
                 ),
                 UpdateWidgetButton(
-                    controller: _controller, appWidgetPlugin: _appWidgetPlugin),
+                    controller: _widgetIdcontroller,
+                    appWidgetPlugin: _appWidgetPlugin),
                 const SizedBox(
                   height: 10,
                 ),
@@ -240,12 +281,15 @@ class ConfigureButton extends StatelessWidget {
   const ConfigureButton({
     Key? key,
     required int? widgetId,
+    required int? layoutId,
     required AppWidgetPlugin appWidgetPlugin,
   })  : _widgetId = widgetId,
+        _layoutId = layoutId,
         _appWidgetPlugin = appWidgetPlugin,
         super(key: key);
 
   final int? _widgetId;
+  final int? _layoutId;
   final AppWidgetPlugin _appWidgetPlugin;
 
   @override
@@ -259,7 +303,7 @@ class ConfigureButton extends StatelessWidget {
             // send configure
             await _appWidgetPlugin.configureWidget(
               widgetId: _widgetId!,
-              widgetLayout: 'example_layout',
+              layoutId: _layoutId!,
               textViews: {
                 'widget_title': 'App Widget',
                 'widget_message': 'Configured in flutter'

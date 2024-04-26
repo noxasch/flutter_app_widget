@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+// NOTE: this merely test platform specific (android) interface
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -54,7 +55,7 @@ void main() {
       expect(
         appWidgetPlugin.configureWidget(
           widgetId: 1,
-          widgetLayout: 'layoutname',
+          layoutId: 1,
           payload: '{"itemId": 1, "stringUid": "uid"}',
           url: 'https://google.come',
         ),
@@ -67,7 +68,7 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname',
             'widgetId': 1,
-            'widgetLayout': 'layoutname',
+            'layoutId': 1,
             'textViews': {},
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
@@ -84,7 +85,7 @@ void main() {
       expect(
         appWidgetPlugin.configureWidget(
           widgetId: 1,
-          widgetLayout: 'layoutname',
+          layoutId: 1,
           payload: '{"itemId": 1, "stringUid": "uid"}',
           url: 'https://google.come',
           androidPackageName: 'appname2',
@@ -98,7 +99,7 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname2',
             'widgetId': 1,
-            'widgetLayout': 'layoutname',
+            'layoutId': 1,
             'textViews': {},
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
@@ -115,7 +116,7 @@ void main() {
       expect(
         appWidgetPlugin.updateWidget(
           widgetId: 1,
-          widgetLayout: 'layoutname',
+          layoutId: 1,
           payload: '{"itemId": 1, "stringUid": "uid"}',
           url: 'https://google.come',
         ),
@@ -128,7 +129,7 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname',
             'widgetId': 1,
-            'widgetLayout': 'layoutname',
+            'layoutId': 1,
             'textViews': {},
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
@@ -146,7 +147,7 @@ void main() {
         appWidgetPlugin.updateWidget(
           androidPackageName: 'appname2',
           widgetId: 1,
-          widgetLayout: 'layoutname',
+          layoutId: 1,
           payload: '{"itemId": 1, "stringUid": "uid"}',
           url: 'https://google.come',
         ),
@@ -159,7 +160,7 @@ void main() {
           arguments: <String, Object>{
             'androidPackageName': 'appname2',
             'widgetId': 1,
-            'widgetLayout': 'layoutname',
+            'layoutId': 1,
             'textViews': {},
             'payload': '{"itemId": 1, "stringUid": "uid"}',
             'url': 'https://google.come',
