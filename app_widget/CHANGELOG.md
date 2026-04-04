@@ -1,3 +1,6 @@
+## 0.4.1
+* fix(android):fix gradle namepsace (@joe-mybuzz)
+
 ## 0.4.0
 * breaking changes: `configureWidget` and `updateWidget` accept `layoutId` instead of `layoutName`
 * breaking changes: `onConfigureWidget` now accept 3 params (`widgetId`, `layoutId`, `layoutName`)
